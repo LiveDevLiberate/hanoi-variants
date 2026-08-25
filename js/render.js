@@ -4,7 +4,8 @@
   else root.HanoiRender = factory();
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
-  const T = (root.HanoiCore || window.HanoiCore).deepTheme;
+  const G = typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : window);
+  const T = G.HanoiCore.deepTheme;
   const MAX_STATES = 5000, LABEL_LIMIT = 800;
 
   function computeTransform(coords, width, height, pad) {
@@ -92,8 +93,7 @@
     }
 
     if (opts.showPath && data.adj && opts.start !== undefined && opts.end !== undefined) {
-      const HCore = root.HanoiCore || window.HanoiCore;
-      const path = HCore.shortestPath(data.adj, opts.start, opts.end);
+      const path = G.HanoiCore.shortestPath(data.adj, opts.start, opts.end);
       for (let k = 0; k < path.length - 1; k++) {
         const p1 = toPx(data.coords[path[k]]), p2 = toPx(data.coords[path[k + 1]]);
         svg.append('line')

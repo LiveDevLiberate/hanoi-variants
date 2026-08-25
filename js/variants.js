@@ -15,7 +15,7 @@
       }
     }
     const coords = Core.barycentric(states);
-    return { states, adj, edges, coords };
+    return { states, adj, edges, coords, directed: !!directed };
   }
 
   function classicBuild({ n }) {
