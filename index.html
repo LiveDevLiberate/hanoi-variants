@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>汉诺塔变体 · 状态图</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <aside id="sidebar">
+      <h1>汉诺塔变体</h1>
+      <nav id="variant-nav"></nav>
+    </aside>
+    <main id="main">
+      <header id="variant-header"></header>
+      <div id="controls"></div>
+      <div id="graph-container">
+        <svg id="graph"></svg>
+        <div id="overlay"></div>
+      </div>
+      <section id="papers"></section>
+    </main>
+  </div>
+  <script src="lib/d3.v7.min.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/variants.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/app.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', function(){ HanoiApp.init(); });</script>
+</body>
+</html>
