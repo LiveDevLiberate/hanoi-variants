@@ -78,7 +78,7 @@
       .append('circle').attr('class', 'node')
       .attr('cx', (s, i) => toPx(data.coords[i])[0])
       .attr('cy', (s, i) => toPx(data.coords[i])[1])
-      .attr('r', data.states.length > 800 ? 6 : 10)
+      .attr('r', data.states.length > 800 ? 3 : 5)
       .style('fill', T.node)
       .style('stroke', 'rgba(0,0,0,0.4)').style('stroke-width', 2);
 
