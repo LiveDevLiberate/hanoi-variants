@@ -85,10 +85,12 @@
 
     if (opts.showLabels && data.states.length <= LABEL_LIMIT) {
       const labelSize = Math.max(4, 16 * Math.pow(50 / Math.max(data.states.length, 2), 0.45));
+      const nodeR = data.states.length > 800 ? 3 : 5;
+      const labelOffset = nodeR + 6;
       svg.selectAll('text.lbl').data(data.states).enter()
         .append('text').attr('class', 'lbl')
         .attr('x', (s, i) => toPx(data.coords[i])[0])
-        .attr('y', (s, i) => toPx(data.coords[i])[1] - labelSize - 2)
+        .attr('y', (s, i) => toPx(data.coords[i])[1] - labelOffset)
         .attr('text-anchor', 'middle')
         .style('fill', T.text).style('font-size', labelSize + 'px')
         .text(s => s.join(''));
