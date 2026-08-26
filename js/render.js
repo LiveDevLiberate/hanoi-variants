@@ -67,10 +67,10 @@
 
     if (directed) {
       svg.append('defs').append('marker')
-        .attr('id', 'arrow').attr('viewBox', '0 0 10 10')
-        .attr('refX', 9).attr('refY', 5).attr('markerWidth', 6)
-        .attr('markerHeight', 6).attr('orient', 'auto-start-reverse')
-        .append('path').attr('d', 'M 0 0 L 10 5 L 0 10 z')
+        .attr('id', 'arrow').attr('viewBox', '0 0 5 5')
+        .attr('refX', 4.5).attr('refY', 2.5).attr('markerWidth', 3)
+        .attr('markerHeight', 3).attr('orient', 'auto-start-reverse')
+        .append('path').attr('d', 'M 0 0 L 5 2.5 L 0 5 z')
         .style('fill', T.edge);
       edgeSel.attr('marker-end', 'url(#arrow)');
     }
@@ -80,8 +80,7 @@
       .attr('cx', (s, i) => toPx(data.coords[i])[0])
       .attr('cy', (s, i) => toPx(data.coords[i])[1])
       .attr('r', data.states.length > 800 ? 3 : 5)
-      .style('fill', T.node)
-      .style('stroke', 'rgba(0,0,0,0.4)').style('stroke-width', 2);
+      .style('fill', T.node);
 
     if (opts.showLabels && data.states.length <= LABEL_LIMIT) {
       const labelSize = Math.max(4, 16 * Math.pow(50 / Math.max(data.states.length, 2), 0.45));
@@ -111,7 +110,7 @@
         .append('circle').attr('class', 'path-end')
         .attr('cx', (d, i) => toPx(data.coords[ends[i]])[0])
         .attr('cy', (d, i) => toPx(data.coords[ends[i]])[1])
-        .attr('r', 18).style('fill', 'none').style('stroke', '#ff4040').style('stroke-width', 4);
+        .attr('r', 10).style('fill', 'none').style('stroke', '#ff4040').style('stroke-width', 3);
     }
   }
 
