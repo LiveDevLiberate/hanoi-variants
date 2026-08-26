@@ -41,8 +41,8 @@
       showMessage(svgEl, `状态数过多：${data.states.length}（上限 ${MAX_STATES}）`);
       return;
     }
-    const w = svgEl.clientWidth || 900, h = svgEl.clientHeight || 500;
-    const pad = 40;
+    const w = svgEl.clientWidth || 1800, h = svgEl.clientHeight || 1000;
+    const pad = 80;
     const toPx = computeTransform(data.coords, w, h, pad);
     const svg = d3.select(svgEl);
     svg.attr('viewBox', `0 0 ${w} ${h}`);
@@ -61,7 +61,7 @@
       .attr('y1', e => edgePts(e)[0][1])
       .attr('x2', e => edgePts(e)[1][0])
       .attr('y2', e => edgePts(e)[1][1])
-      .style('stroke', T.edge).style('stroke-width', 1.2)
+      .style('stroke', T.edge).style('stroke-width', 2.4)
       .style('opacity', 0.55);
 
     if (directed) {
@@ -78,17 +78,17 @@
       .append('circle').attr('class', 'node')
       .attr('cx', (s, i) => toPx(data.coords[i])[0])
       .attr('cy', (s, i) => toPx(data.coords[i])[1])
-      .attr('r', data.states.length > 800 ? 3 : 5)
+      .attr('r', data.states.length > 800 ? 6 : 10)
       .style('fill', T.node)
-      .style('stroke', 'rgba(0,0,0,0.4)').style('stroke-width', 1);
+      .style('stroke', 'rgba(0,0,0,0.4)').style('stroke-width', 2);
 
     if (opts.showLabels && data.states.length <= LABEL_LIMIT) {
       svg.selectAll('text.lbl').data(data.states).enter()
         .append('text').attr('class', 'lbl')
         .attr('x', (s, i) => toPx(data.coords[i])[0])
-        .attr('y', (s, i) => toPx(data.coords[i])[1] - 8)
+        .attr('y', (s, i) => toPx(data.coords[i])[1] - 16)
         .attr('text-anchor', 'middle')
-        .style('fill', T.text).style('font-size', '8px')
+        .style('fill', T.text).style('font-size', '16px')
         .text(s => s.join(''));
     }
 
@@ -99,7 +99,7 @@
         svg.append('line')
           .attr('x1', p1[0]).attr('y1', p1[1])
           .attr('x2', p2[0]).attr('y2', p2[1])
-          .style('stroke', '#ff4040').style('stroke-width', 3)
+          .style('stroke', '#ff4040').style('stroke-width', 6)
           .style('opacity', 0.9);
       }
       const ends = [path[0], path[path.length - 1]];
@@ -107,7 +107,7 @@
         .append('circle').attr('class', 'path-end')
         .attr('cx', (d, i) => toPx(data.coords[ends[i]])[0])
         .attr('cy', (d, i) => toPx(data.coords[ends[i]])[1])
-        .attr('r', 9).style('fill', 'none').style('stroke', '#ff4040').style('stroke-width', 2);
+        .attr('r', 18).style('fill', 'none').style('stroke', '#ff4040').style('stroke-width', 4);
     }
   }
 
