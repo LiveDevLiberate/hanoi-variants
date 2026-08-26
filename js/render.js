@@ -84,12 +84,13 @@
       .style('stroke', 'rgba(0,0,0,0.4)').style('stroke-width', 2);
 
     if (opts.showLabels && data.states.length <= LABEL_LIMIT) {
+      const labelSize = Math.max(5, 16 * Math.pow(50 / Math.max(data.states.length, 2), 0.3));
       svg.selectAll('text.lbl').data(data.states).enter()
         .append('text').attr('class', 'lbl')
         .attr('x', (s, i) => toPx(data.coords[i])[0])
-        .attr('y', (s, i) => toPx(data.coords[i])[1] - 16)
+        .attr('y', (s, i) => toPx(data.coords[i])[1] - labelSize - 2)
         .attr('text-anchor', 'middle')
-        .style('fill', T.text).style('font-size', '16px')
+        .style('fill', T.text).style('font-size', labelSize + 'px')
         .text(s => s.join(''));
     }
 
