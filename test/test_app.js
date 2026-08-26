@@ -2,7 +2,7 @@
 const assert = require('assert');
 
 function createElement() {
-  const el = {
+  return {
     style: {}, dataset: {}, classList: { add(){}, remove(){} },
     innerHTML: '', textContent: '', value: '', checked: true,
     children: [],
@@ -10,22 +10,32 @@ function createElement() {
     remove() {}, addEventListener() {},
     querySelector() { return { addEventListener(){}, textContent:'', checked:true }; },
   };
-  return el;
 }
 const elements = {};
+const svgEls = [];
 function getEl(id) {
   if (!elements[id]) elements[id] = createElement();
   return elements[id];
 }
-// createElementNS 用于 svg
+function makeSvg() {
+  const el = createElement();
+  el.attrs = {};
+  el.setAttribute = function (k, v) { this.attrs[k] = v; };
+  Object.defineProperty(el, 'className', {
+    get() { return { baseVal: el.attrs.class || '' }; },
+    set() { throw new TypeError('SVGElement.className is read-only'); },
+  });
+  Object.defineProperty(el, 'id', {
+    get() { return el.attrs.id || ''; },
+    set(v) { el.attrs.id = v; },
+  });
+  svgEls.push(el);
+  return el;
+}
 global.document = {
   getElementById: getEl,
   createElement: createElement,
-  createElementNS: () => {
-    const el = createElement();
-    el.setAttribute = () => {};
-    return el;
-  },
+  createElementNS: makeSvg,
   addEventListener() {},
 };
 global.window = global;
@@ -84,15 +94,18 @@ for (const v of Variants) {
   }
 }
 
-// init: 所有变体渲染到同一页面, 每变体有独立 svg
 App.init();
+
 for (const v of Variants) {
-  const svg = getEl('graph-' + v.id);
+  const svg = svgEls.find(s => s.attrs.id === 'graph-' + v.id);
   assert.ok(svg, `${v.id} svg 元素存在`);
+  assert.strictEqual(svg.attrs.class, 'v-graph', `${v.id} svg class`);
   const stats = getEl('stats-' + v.id);
   assert.ok(stats.textContent.length > 0, `${v.id} stats 有内容`);
   const lbl = getEl('chk-labels-' + v.id);
   assert.ok(lbl, `${v.id} 标签开关存在`);
 }
 
-console.log('✓ test_app 全部通过 (7 变体单页流程 + 坐标无 NaN + 渲染调用)');
+assert.strictEqual(svgEls.length, 7, '7 个独立 svg');
+
+console.log('✓ test_app 全部通过 (7 变体单页流程 + SVG class 只读 + 坐标无 NaN)');

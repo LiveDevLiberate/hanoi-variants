@@ -119,7 +119,7 @@
     gc.className = 'v-graph-container';
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.id = 'graph-' + v.id;
-    svg.className = 'v-graph';
+    svg.setAttribute('class', 'v-graph');
     gc.appendChild(svg);
     block.appendChild(gc);
 
