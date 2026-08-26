@@ -42,7 +42,7 @@
       showMessage(svgEl, `状态数过多：${data.states.length}（上限 ${MAX_STATES}）`);
       return;
     }
-    const w = svgEl.clientWidth || 1800, h = svgEl.clientHeight || 1000;
+    const w = 1800, h = 1000;
     const pad = 80;
     const toPx = computeTransform(data.coords, w, h, pad);
     const svg = d3.select(svgEl);

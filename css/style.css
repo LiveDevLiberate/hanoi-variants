@@ -39,9 +39,9 @@ body { background: var(--bg); color: var(--text);
   accent-color: var(--node); background: #111; }
 .control input[type=checkbox] { accent-color: var(--node); margin-right: 5px; }
 
-.v-graph-container { position: relative; min-height: 880px; }
-.v-graph { width: 100%; height: 880px; display: block; }
-#graph { width: 100%; display: block; }
+.v-graph-container { position: relative; }
+.v-graph { width: 100%; height: auto; aspect-ratio: 18 / 10; display: block; }
+#graph { width: 100%; height: auto; aspect-ratio: 18 / 10; display: block; }
 .node { cursor: pointer; }
 .tooltip { position: absolute; background: #000; color: #fff;
   border: 1px solid var(--line); padding: 8px 12px; font-size: 12px;
