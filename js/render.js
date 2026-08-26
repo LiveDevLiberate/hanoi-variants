@@ -7,7 +7,6 @@
   const G = typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : window);
   const T = G.HanoiCore.deepTheme;
   const MAX_STATES = 5000, LABEL_LIMIT = 800;
-  const MAX_STATES_LIMITLESS = 30000;
 
   function computeTransform(coords, width, height, pad) {
     const xs = coords.map(c => c[0]), ys = coords.map(c => c[1]);
@@ -39,10 +38,8 @@
   function renderGraph(svgEl, data, opts) {
     opts = opts || {};
     clearGraph(svgEl);
-    const limitless = !!opts.limitless;
-    const cap = limitless ? MAX_STATES_LIMITLESS : MAX_STATES;
-    if (data.states.length > cap) {
-      showMessage(svgEl, `状态数过多：${data.states.length}（上限 ${cap}）`);
+    if (data.states.length > MAX_STATES) {
+      showMessage(svgEl, `状态数过多：${data.states.length}（上限 ${MAX_STATES}）`);
       return;
     }
     const w = 1800, h = 1000;
@@ -59,19 +56,16 @@
       return [toPx(data.coords[a]), toPx(data.coords[b])];
     }
 
-    const drawEdges = !limitless || data.states.length <= 3000;
-    const edgeSel = drawEdges
-      ? svg.selectAll('line.edge').data(data.edges).enter()
-          .append('line').attr('class', 'edge')
-          .attr('x1', e => edgePts(e)[0][0])
-          .attr('y1', e => edgePts(e)[0][1])
-          .attr('x2', e => edgePts(e)[1][0])
-          .attr('y2', e => edgePts(e)[1][1])
-          .style('stroke', T.edge).style('stroke-width', 2.4)
-          .style('opacity', 0.55)
-      : null;
+    const edgeSel = svg.selectAll('line.edge').data(data.edges).enter()
+      .append('line').attr('class', 'edge')
+      .attr('x1', e => edgePts(e)[0][0])
+      .attr('y1', e => edgePts(e)[0][1])
+      .attr('x2', e => edgePts(e)[1][0])
+      .attr('y2', e => edgePts(e)[1][1])
+      .style('stroke', T.edge).style('stroke-width', 2.4)
+      .style('opacity', 0.55);
 
-    if (drawEdges && directed) {
+    if (directed) {
       svg.append('defs').append('marker')
         .attr('id', 'arrow').attr('viewBox', '0 0 5 5')
         .attr('refX', 4.5).attr('refY', 2.5).attr('markerWidth', 3)
@@ -81,22 +75,16 @@
       edgeSel.attr('marker-end', 'url(#arrow)');
     }
 
-    const nodeR = limitless
-      ? Math.max(1, 3 * Math.pow(3000 / Math.max(data.states.length, 2), 0.5))
-      : (data.states.length > 800 ? 3 : 5);
-    const sampleStep = limitless && data.states.length > 6000
-      ? Math.ceil(data.states.length / 6000) : 1;
-    const nodeIndices = [];
-    for (let i = 0; i < data.states.length; i += sampleStep) nodeIndices.push(i);
-    svg.selectAll('circle.node').data(nodeIndices).enter()
+    const nodeSel = svg.selectAll('circle.node').data(data.states).enter()
       .append('circle').attr('class', 'node')
-      .attr('cx', (d) => toPx(data.coords[d])[0])
-      .attr('cy', (d) => toPx(data.coords[d])[1])
-      .attr('r', nodeR)
+      .attr('cx', (s, i) => toPx(data.coords[i])[0])
+      .attr('cy', (s, i) => toPx(data.coords[i])[1])
+      .attr('r', data.states.length > 800 ? 3 : 5)
       .style('fill', T.node);
 
-    if (!limitless && opts.showLabels && data.states.length <= LABEL_LIMIT) {
+    if (opts.showLabels && data.states.length <= LABEL_LIMIT) {
       const labelSize = Math.max(4, 16 * Math.pow(50 / Math.max(data.states.length, 2), 0.45));
+      const nodeR = data.states.length > 800 ? 3 : 5;
       const labelOffset = nodeR + 6;
       svg.selectAll('text.lbl').data(data.states).enter()
         .append('text').attr('class', 'lbl')
@@ -107,7 +95,7 @@
         .text(s => s.join(''));
     }
 
-    if (!limitless && opts.showPath && data.adj && opts.start !== undefined && opts.end !== undefined) {
+    if (opts.showPath && data.adj && opts.start !== undefined && opts.end !== undefined) {
       const path = G.HanoiCore.shortestPath(data.adj, opts.start, opts.end);
       for (let k = 0; k < path.length - 1; k++) {
         const p1 = toPx(data.coords[path[k]]), p2 = toPx(data.coords[path[k + 1]]);
