@@ -33,10 +33,12 @@
   ];
 
   const state = {};
+  let limitless = false;
 
   function buildParams(v) {
     const p = {};
     v.params.forEach(pp => { p[pp.key] = state[v.id].params[pp.key]; });
+    if (limitless) p.skipEdges = true;
     return p;
   }
 
@@ -54,11 +56,12 @@
     st.data = v.build(buildParams(v));
     const svg = document.getElementById('graph-' + v.id);
     const opts = { showLabels: st.showLabels, showPath: st.showPath };
-    if (st.data.states.length <= 5000 && st.data.states.length > 0) {
+    const cap = limitless ? 30000 : 5000;
+    if (!limitless && st.data.states.length <= cap && st.data.states.length > 0) {
       opts.start = 0;
       opts.end = st.data.states.length - 1;
     }
-    HanoiRender.renderGraph(svg, st.data, opts);
+    HanoiRender.renderGraph(svg, st.data, Object.assign({}, opts, { limitless }));
     const f = v.formula(buildParams(v));
     const sEl = document.getElementById('stats-' + v.id);
     sEl.innerHTML =
@@ -156,11 +159,37 @@
     });
   }
 
+  function renderGlobalControl() {
+    const ctrl = document.createElement('div');
+    ctrl.className = 'v-controls';
+    ctrl.id = 'global-control';
+    ctrl.innerHTML = `<label style="font-size:13px;color:#ffd700;letter-spacing:0.04em">
+      <input type="checkbox" id="chk-limitless"> 节点不限模式</label>`;
+    ctrl.querySelector('input').addEventListener('change', e => {
+      limitless = e.target.checked;
+      document.querySelectorAll('#variants .variant-block .v-controls .control input[type=range]')
+        .forEach(() => {});
+      HanoiVariants.forEach(v => {
+        if (limitless) {
+          state[v.id].showLabels = false;
+          state[v.id].showPath = false;
+          const lbl = document.getElementById('chk-labels-' + v.id);
+          if (lbl) lbl.checked = false;
+          const pth = document.getElementById('chk-path-' + v.id);
+          if (pth) pth.checked = false;
+        }
+        buildVariant(v);
+      });
+    });
+    document.getElementById('page-header').appendChild(ctrl);
+  }
+
   function init() {
     const container = document.getElementById('variants');
     HanoiVariants.forEach(v => {
       container.appendChild(buildVariantBlock(v));
     });
+    renderGlobalControl();
     HanoiVariants.forEach(v => buildVariant(v));
     renderPapers();
   }

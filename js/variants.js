@@ -24,16 +24,20 @@
       Core.tryMove(s, lv, dest, { moveRule: 'classic' }), false);
   }
 
-  function sameDiskBuild({ N, nl }) {
+  function sameDiskBuild({ N, nl, skipEdges }) {
+    // 直接生成 C(N+2,2) 种分布 (三柱隔板法), 不枚举 3^N
     function distributions(N) {
-      const total = Math.pow(3, N), seen = new Set(), out = [];
-      for (let k = 0; k < total; k++) {
-        const d = new Array(N); let x = k;
-        for (let i = 0; i < N; i++) { d[i] = x % 3; x = Math.floor(x / 3); }
-        const key = d.slice().sort((a, b) => a - b).join(',');
-        if (!seen.has(key)) { seen.add(key); out.push(d.slice().sort((a, b) => a - b)); }
+      const out = [];
+      for (let a = 0; a <= N; a++) {
+        for (let b = 0; a + b <= N; b++) {
+          const d = [];
+          for (let i = 0; i < a; i++) d.push(0);
+          for (let i = 0; i < b; i++) d.push(1);
+          for (let i = 0; i < N - a - b; i++) d.push(2);
+          out.push(d);
+        }
       }
-      return out.sort((a, b) => a.join(',').localeCompare(b.join(',')));
+      return out;
     }
     const dists = distributions(N);
     const states = [];
@@ -71,14 +75,19 @@
     }
     const idx = new Map(states.map((s, i) => [JSON.stringify(s), i]));
     const adj = states.map(() => []);
-    for (let i = 0; i < states.length; i++) {
-      for (const ns of wolframNeighbors(states[i])) {
-        const j = idx.get(JSON.stringify(ns));
-        if (j !== undefined && j !== i && !adj[i].includes(j)) adj[i].push(j);
+    const needEdges = !skipEdges && states.length <= 5000;
+    if (needEdges) {
+      for (let i = 0; i < states.length; i++) {
+        for (const ns of wolframNeighbors(states[i])) {
+          const j = idx.get(JSON.stringify(ns));
+          if (j !== undefined && j !== i && !adj[i].includes(j)) adj[i].push(j);
+        }
       }
     }
     const edges = [];
-    for (let i = 0; i < adj.length; i++) for (const j of adj[i]) if (i < j) edges.push([i, j]);
+    if (needEdges) {
+      for (let i = 0; i < adj.length; i++) for (const j of adj[i]) if (i < j) edges.push([i, j]);
+    }
     const corner = [[0, 0], [1, 0], [0.5, Math.sqrt(3) / 2]];
     function barPoint(dist) {
       const c = [0, 0, 0];
@@ -226,7 +235,7 @@
       id: 'same-disk', name: '相同碟片',
       desc: '每级 N 个相同大小的盘，nl 个等级。同大小盘互换算同一状态，每级 C(N+2,2) 种分布。',
       params: [
-        { key: 'N', label: '每级碟数', min: 1, max: 4, step: 1, default: 2 },
+        { key: 'N', label: '每级碟数', min: 1, max: 15, step: 1, default: 2 },
         { key: 'nl', label: '等级数', min: 1, max: 3, step: 1, default: 2 }
       ],
       build: sameDiskBuild,
