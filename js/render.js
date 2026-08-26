@@ -56,35 +56,43 @@
       return [toPx(data.coords[a]), toPx(data.coords[b])];
     }
 
-    const edgeSel = svg.selectAll('line.edge').data(data.edges).enter()
-      .append('line').attr('class', 'edge')
-      .attr('x1', e => edgePts(e)[0][0])
-      .attr('y1', e => edgePts(e)[0][1])
-      .attr('x2', e => edgePts(e)[1][0])
-      .attr('y2', e => edgePts(e)[1][1])
-      .style('stroke', T.edge).style('stroke-width', 2.4)
-      .style('opacity', 0.55);
+    const showEdges = opts.showEdges !== false;
+    const edgeOpacity = data.edges.length > 1500 ? 0.15
+      : data.edges.length > 600 ? 0.3 : 0.55;
+    if (showEdges && data.edges.length <= 8000) {
+      const edgeSel = svg.selectAll('line.edge').data(data.edges).enter()
+        .append('line').attr('class', 'edge')
+        .attr('x1', e => edgePts(e)[0][0])
+        .attr('y1', e => edgePts(e)[0][1])
+        .attr('x2', e => edgePts(e)[1][0])
+        .attr('y2', e => edgePts(e)[1][1])
+        .style('stroke', T.edge).style('stroke-width', 2.4)
+        .style('opacity', edgeOpacity);
 
-    if (directed) {
-      svg.append('defs').append('marker')
-        .attr('id', 'arrow').attr('viewBox', '0 0 5 5')
-        .attr('refX', 4.5).attr('refY', 2.5).attr('markerWidth', 3)
-        .attr('markerHeight', 3).attr('orient', 'auto-start-reverse')
-        .append('path').attr('d', 'M 0 0 L 5 2.5 L 0 5 z')
-        .style('fill', T.edge);
-      edgeSel.attr('marker-end', 'url(#arrow)');
+      if (directed) {
+        svg.append('defs').append('marker')
+          .attr('id', 'arrow').attr('viewBox', '0 0 5 5')
+          .attr('refX', 4.5).attr('refY', 2.5).attr('markerWidth', 3)
+          .attr('markerHeight', 3).attr('orient', 'auto-start-reverse')
+          .append('path').attr('d', 'M 0 0 L 5 2.5 L 0 5 z')
+          .style('fill', T.edge);
+        edgeSel.attr('marker-end', 'url(#arrow)');
+      }
     }
 
-    const nodeSel = svg.selectAll('circle.node').data(data.states).enter()
+    const nodeR = data.states.length > 800 ? 3 : 5;
+    const sampleStep = data.states.length > 2000 ? Math.ceil(data.states.length / 2000) : 1;
+    const nodeIdx = [];
+    for (let i = 0; i < data.states.length; i += sampleStep) nodeIdx.push(i);
+    svg.selectAll('circle.node').data(nodeIdx).enter()
       .append('circle').attr('class', 'node')
-      .attr('cx', (s, i) => toPx(data.coords[i])[0])
-      .attr('cy', (s, i) => toPx(data.coords[i])[1])
-      .attr('r', data.states.length > 800 ? 3 : 5)
+      .attr('cx', (d) => toPx(data.coords[d])[0])
+      .attr('cy', (d) => toPx(data.coords[d])[1])
+      .attr('r', nodeR)
       .style('fill', T.node);
 
     if (opts.showLabels && data.states.length <= LABEL_LIMIT) {
       const labelSize = Math.max(4, 16 * Math.pow(50 / Math.max(data.states.length, 2), 0.45));
-      const nodeR = data.states.length > 800 ? 3 : 5;
       const labelOffset = nodeR + 6;
       svg.selectAll('text.lbl').data(data.states).enter()
         .append('text').attr('class', 'lbl')
