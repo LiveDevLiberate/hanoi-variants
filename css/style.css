@@ -11,7 +11,7 @@
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { background: var(--bg); color: var(--text);
-  font-family: "Georgia", "Times New Roman", "Noto Serif CJK SC",
+  font-family: "Moon Stars Kai HW", "Georgia", "Noto Serif CJK SC",
     "Songti SC", "SimSun", serif;
   line-height: 1.7; font-size: 15px; }
 #app { min-height: 100vh; }
@@ -21,8 +21,9 @@ body { background: var(--bg); color: var(--text);
 #hanoi-logo { width: 90px; height: 68px; flex-shrink: 0; }
 #header-text h1 { font-size: 30px; font-weight: normal;
   letter-spacing: 0.04em; margin-bottom: 2px; }
-#header-text .subtitle { color: var(--dim); font-size: 13px;
-  letter-spacing: 0.12em; }
+#header-text .subtitle { color: var(--dim); font-size: 15px;
+  letter-spacing: 0.12em;
+  font-family: "峄山碑篆体", "Moon Stars Kai HW", serif; }
 
 .variant-block { margin-bottom: 72px; padding-top: 24px; }
 .variant-block .v-title { font-size: 24px; font-weight: normal;
