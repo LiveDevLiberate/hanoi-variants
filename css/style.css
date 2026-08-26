@@ -12,43 +12,39 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { background: var(--bg); color: var(--text);
   font-family: "Georgia", "Times New Roman", "Noto Serif CJK SC",
-    "Songti SC", "SimSun", serif;   /* 衬线为主，学术感 */
+    "Songti SC", "SimSun", serif;
   line-height: 1.7; font-size: 15px; }
-#app { display: flex; min-height: 100vh; }
-#sidebar { width: 240px; padding: 40px 24px;
-  border-right: 1px solid var(--line);
-  position: sticky; top: 0; height: 100vh; overflow-y: auto; }
-#sidebar h1 { font-size: 15px; font-weight: normal;
-  letter-spacing: 0.12em; margin-bottom: 28px; color: var(--dim);
-  text-transform: uppercase; }
-#variant-nav a { display: block; padding: 6px 0; color: var(--dim);
-  text-decoration: none; font-size: 14px; letter-spacing: 0.05em;
-  border-left: 1px solid transparent; padding-left: 12px; }
-#variant-nav a:hover { color: var(--text); }
-#variant-nav a.active { color: var(--node); border-left-color: var(--node); }
-#main { flex: 1; padding: 48px 56px 60px; max-width: 1080px; }
-#variant-header { margin-bottom: 20px; }
-#variant-header h2 { font-size: 28px; font-weight: normal;
-  letter-spacing: 0.02em; margin-bottom: 8px; }
-#variant-header p { color: var(--dim); font-size: 14px; }
-#variant-header #stats { color: var(--accent); font-size: 13px;
-  margin-top: 10px; font-style: italic; }
-#controls { display: flex; gap: 28px; flex-wrap: wrap; align-items: center;
-  margin: 8px 0 24px; padding: 16px 0; border-top: 1px solid var(--line);
+#app { min-height: 100vh; }
+#main { max-width: 1280px; margin: 0 auto; padding: 48px 40px 80px; }
+#page-header { margin-bottom: 48px; border-bottom: 1px solid var(--line); padding-bottom: 24px; }
+#page-header h1 { font-size: 30px; font-weight: normal;
+  letter-spacing: 0.04em; margin-bottom: 10px; }
+#page-header p { color: var(--dim); font-size: 14px; }
+
+.variant-block { margin-bottom: 72px; padding-top: 24px; }
+.variant-block .v-title { font-size: 24px; font-weight: normal;
+  letter-spacing: 0.03em; margin-bottom: 6px; }
+.variant-block .v-desc { color: var(--dim); font-size: 13px; margin-bottom: 14px; }
+.variant-block .v-stats { color: var(--accent); font-size: 13px;
+  margin-bottom: 12px; font-style: italic; }
+
+.v-controls { display: flex; gap: 28px; flex-wrap: wrap; align-items: center;
+  margin: 4px 0 20px; padding: 12px 0; border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line); }
-.control label { font-size: 13px; color: var(--dim);
-  letter-spacing: 0.04em; }
+.control label { font-size: 13px; color: var(--dim); letter-spacing: 0.04em; }
 .control .val { color: var(--node); font-weight: normal; margin: 0 6px; }
 .control input[type=range] { vertical-align: middle;
   accent-color: var(--node); background: #111; }
 .control input[type=checkbox] { accent-color: var(--node); margin-right: 5px; }
-#graph-container { position: relative; min-height: 460px; }
+
+.v-graph-container { position: relative; min-height: 880px; }
 #graph { width: 100%; display: block; }
 .node { cursor: pointer; }
 .tooltip { position: absolute; background: #000; color: #fff;
   border: 1px solid var(--line); padding: 8px 12px; font-size: 12px;
   pointer-events: none; display: none; }
-#papers { margin-top: 64px; border-top: 1px solid var(--line); padding-top: 28px; }
+
+#papers { margin-top: 80px; border-top: 1px solid var(--line); padding-top: 28px; }
 #papers h2 { font-size: 15px; font-weight: normal; letter-spacing: 0.1em;
   color: var(--dim); text-transform: uppercase; margin-bottom: 16px; }
 #papers h3 { font-size: 14px; font-weight: normal; margin: 18px 0 8px;

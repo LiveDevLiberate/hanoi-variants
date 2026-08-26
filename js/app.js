@@ -1,4 +1,4 @@
-/* app.js — 应用逻辑 (UMD) */
+/* app.js — 应用逻辑 (UMD): 所有变体单页展示 */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory();
   else root.HanoiApp = factory();
@@ -32,96 +32,98 @@
     ]}
   ];
 
-  let currentId = 'classic';
-  let currentParams = {};
-  let currentData = null;
+  const state = {};
 
-  function renderNav() {
-    const nav = document.getElementById('variant-nav');
-    nav.innerHTML = '';
-    HanoiVariants.forEach(v => {
-      const a = document.createElement('a');
-      a.textContent = v.name;
-      a.dataset.id = v.id;
-      if (v.id === currentId) a.classList.add('active');
-      a.addEventListener('click', () => selectVariant(v.id));
-      nav.appendChild(a);
-    });
+  function buildParams(v) {
+    const p = {};
+    v.params.forEach(pp => { p[pp.key] = state[v.id].params[pp.key]; });
+    return p;
   }
 
-  function renderControls() {
-    const ctrl = document.getElementById('controls');
-    ctrl.innerHTML = '';
-    const v = HanoiVariants.find(x => x.id === currentId);
-    const header = document.getElementById('variant-header');
-    const stats = document.getElementById('stats');
-    const oldStats = document.getElementById('stats');
-    if (oldStats) oldStats.remove();
-    header.innerHTML = `<h2>${v.name}</h2><p style="color:#888;font-size:13px">${v.desc}</p>`;
+  function buildVariant(v) {
+    const st = state[v.id];
+    st.data = v.build(buildParams(v));
+    const svg = document.getElementById('graph-' + v.id);
+    const opts = { showLabels: st.showLabels, showPath: st.showPath };
+    if (v.shortest && st.data.states.length <= 5000) {
+      const startS = v.shortest.start, endS = v.shortest.end;
+      opts.start = st.data.states.findIndex(s => JSON.stringify(s) === JSON.stringify(startS));
+      opts.end = st.data.states.findIndex(s => JSON.stringify(s) === JSON.stringify(endS));
+    }
+    HanoiRender.renderGraph(svg, st.data, opts);
+    const f = v.formula(buildParams(v));
+    document.getElementById('stats-' + v.id).textContent =
+      `状态数 = ${st.data.states.length}（公式 ${f.states}）· 边数 = ${st.data.edges.length}（${f.edges}）`;
+  }
 
+  function buildVariantBlock(v) {
+    const st = state[v.id] = { params: {}, showLabels: true, showPath: !!v.shortest, data: null };
+    v.params.forEach(pp => { st.params[pp.key] = pp.default; });
+
+    const block = document.createElement('section');
+    block.className = 'variant-block';
+
+    const title = document.createElement('h2');
+    title.className = 'v-title';
+    title.textContent = v.name;
+    block.appendChild(title);
+
+    const desc = document.createElement('p');
+    desc.className = 'v-desc';
+    desc.textContent = v.desc;
+    block.appendChild(desc);
+
+    const stats = document.createElement('div');
+    stats.className = 'v-stats';
+    stats.id = 'stats-' + v.id;
+    block.appendChild(stats);
+
+    const ctrl = document.createElement('div');
+    ctrl.className = 'v-controls';
     v.params.forEach(p => {
       const wrap = document.createElement('div');
       wrap.className = 'control';
-      const val = currentParams[p.key] ?? p.default;
-      wrap.innerHTML = `<label>${p.label}: <span class="val" id="val-${p.key}">${val}</span></label>
-        <input type="range" id="param-${p.key}" min="${p.min}" max="${p.max}" step="${p.step}" value="${val}">`;
+      const val = st.params[p.key];
+      wrap.innerHTML = `<label>${p.label}: <span class="val" id="val-${v.id}-${p.key}">${val}</span></label>
+        <input type="range" id="param-${v.id}-${p.key}" min="${p.min}" max="${p.max}" step="${p.step}" value="${val}">`;
       wrap.querySelector('input').addEventListener('input', e => {
-        currentParams[p.key] = Number(e.target.value);
-        document.getElementById(`val-${p.key}`).textContent = currentParams[p.key];
-        rebuild();
+        st.params[p.key] = Number(e.target.value);
+        document.getElementById(`val-${v.id}-${p.key}`).textContent = st.params[p.key];
+        buildVariant(v);
       });
       ctrl.appendChild(wrap);
     });
 
     const lblWrap = document.createElement('div');
     lblWrap.className = 'control';
-    lblWrap.innerHTML = `<label><input type="checkbox" id="chk-labels" checked> 标签</label>`;
-    lblWrap.querySelector('input').addEventListener('change', rebuild);
+    lblWrap.innerHTML = `<label><input type="checkbox" id="chk-labels-${v.id}" checked> 标签</label>`;
+    lblWrap.querySelector('input').addEventListener('change', e => {
+      st.showLabels = e.target.checked;
+      buildVariant(v);
+    });
     ctrl.appendChild(lblWrap);
 
     if (v.shortest) {
       const spWrap = document.createElement('div');
       spWrap.className = 'control';
-      spWrap.innerHTML = `<label><input type="checkbox" id="chk-path" checked> 最短路径</label>`;
-      spWrap.querySelector('input').addEventListener('change', rebuild);
+      spWrap.innerHTML = `<label><input type="checkbox" id="chk-path-${v.id}" checked> 最短路径</label>`;
+      spWrap.querySelector('input').addEventListener('change', e => {
+        st.showPath = e.target.checked;
+        buildVariant(v);
+      });
       ctrl.appendChild(spWrap);
     }
-  }
+    block.appendChild(ctrl);
 
-  function buildParams() {
-    const v = HanoiVariants.find(x => x.id === currentId);
-    const p = {};
-    v.params.forEach(pp => { p[pp.key] = currentParams[pp.key] ?? pp.default; });
-    return p;
-  }
+    const gc = document.createElement('div');
+    gc.className = 'v-graph-container';
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.id = 'graph-' + v.id;
+    svg.className = 'v-graph';
+    gc.appendChild(svg);
+    block.appendChild(gc);
 
-  function rebuild() {
-    const v = HanoiVariants.find(x => x.id === currentId);
-    const p = buildParams();
-    currentData = v.build(p);
-    const svg = document.getElementById('graph');
-    const showLabels = document.getElementById('chk-labels')?.checked ?? true;
-    const showPath = document.getElementById('chk-path')?.checked ?? false;
-    const opts = { showLabels, showPath };
-    if (v.shortest && currentData.states.length <= 5000) {
-      const startS = v.shortest.start, endS = v.shortest.end;
-      opts.start = currentData.states.findIndex(s => JSON.stringify(s) === JSON.stringify(startS));
-      opts.end = currentData.states.findIndex(s => JSON.stringify(s) === JSON.stringify(endS));
-    }
-    HanoiRender.renderGraph(svg, currentData, opts);
-    updateStats(v, p);
-  }
-
-  function updateStats(v, p) {
-    const header = document.getElementById('variant-header');
-    const old = document.getElementById('stats');
-    if (old) old.remove();
-    const f = v.formula(p);
-    const info = document.createElement('div');
-    info.id = 'stats';
-    info.style.cssText = 'color:#ffd700;font-size:13px;margin-top:6px;font-style:italic;';
-    info.textContent = `状态数 = ${currentData.states.length}（公式 ${f.states}）· 边数 = ${currentData.edges.length}（${f.edges}）`;
-    header.appendChild(info);
+    return block;
   }
 
   function renderPapers() {
@@ -146,20 +148,14 @@
     });
   }
 
-  function selectVariant(id) {
-    currentId = id;
-    currentParams = {};
-    const v = HanoiVariants.find(x => x.id === id);
-    v.params.forEach(p => { currentParams[p.key] = p.default; });
-    renderNav();
-    renderControls();
-    rebuild();
-  }
-
   function init() {
+    const container = document.getElementById('variants');
+    HanoiVariants.forEach(v => {
+      container.appendChild(buildVariantBlock(v));
+    });
+    HanoiVariants.forEach(v => buildVariant(v));
     renderPapers();
-    selectVariant('classic');
   }
 
-  return { init, selectVariant, rebuild };
+  return { init };
 });
