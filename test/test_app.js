@@ -69,10 +69,10 @@ const Core = globalThis.HanoiCore;
 const Variants = globalThis.HanoiVariants;
 const App = globalThis.HanoiApp;
 
-assert.strictEqual(Variants.length, 8);
+assert.strictEqual(Variants.length, 10);
 const ids = Variants.map(v => v.id);
 assert.deepStrictEqual(ids,
-  ['classic', 'same-disk', 'oneway', 'linear', 'star', 'four-peg', 'magnetic', 'forbidden']);
+  ['classic', 'same-disk', 'oneway', 'linear', 'star', 'four-peg', 'magnetic', 'twin', 'weighted', 'forbidden']);
 
 for (const v of Variants) {
   assert.strictEqual(typeof v.build, 'function', `${v.id} build`);
@@ -94,7 +94,7 @@ for (const v of Variants) {
       assert.strictEqual(typeof e.from, 'number', `${v.id} edge.from`);
       assert.strictEqual(typeof e.to, 'number', `${v.id} edge.to`);
     } else {
-      assert.ok(Array.isArray(e) && e.length === 2, `${v.id} edge pair`);
+      assert.ok(Array.isArray(e) && e.length >= 2, `${v.id} edge pair`);
     }
   }
 }
@@ -111,6 +111,6 @@ for (const v of Variants) {
   assert.ok(lbl, `${v.id} 标签开关存在`);
 }
 
-assert.strictEqual(svgEls.length, 8, '8 个独立 svg');
+assert.strictEqual(svgEls.length, 10, '10 个独立 svg');
 
-console.log('✓ test_app 全部通过 (8 变体单页流程 + SVG class 只读 + 坐标无 NaN)');
+console.log('✓ test_app 全部通过 (10 变体单页流程 + SVG class 只读 + 坐标无 NaN)');

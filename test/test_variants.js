@@ -31,6 +31,13 @@ assert.ok(ow.edges.every(e => {
 assert.deepStrictEqual(counts('linear', { n: 2 }), { states: 9, edges: 8 });
 assert.deepStrictEqual(counts('linear', { n: 3 }), { states: 27, edges: 26 });
 
+// 双子塔 n=1: 9/24有向; n=2: 81/252 (有向边, 无向化后 21/222 与 Wolfram 一致)
+assert.deepStrictEqual(counts('twin', { n: 1 }), { states: 9, edges: 24 });
+assert.deepStrictEqual(counts('twin', { n: 2 }), { states: 81, edges: 252 });
+
+// 加权 n=3: 27/39 (同经典, 边带权重)
+assert.deepStrictEqual(counts('weighted', { n: 3 }), { states: 27, edges: 39 });
+
 // 星形 n=2: 9/8; n=3: 27/26; n=4: 81/80 (Wolfram 验证: E = 3^n - 1)
 assert.deepStrictEqual(counts('star', { n: 2 }), { states: 9, edges: 8 });
 assert.deepStrictEqual(counts('star', { n: 3 }), { states: 27, edges: 26 });

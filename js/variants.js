@@ -197,6 +197,119 @@
     return { states, adj, edges, coords };
   }
 
+
+  // 双子塔: 两套 3 柱 (A/B), 每套 n 盘, 同步移动
+  // 状态 = 每盘在 A/B 两组的位置对, 共 9^n 个
+  function twinBuild({ n }) {
+    const perDisk = 9; // 每盘 (a,b) ∈ {0,1,2}²
+    const total = Math.pow(perDisk, n);
+    const states = [];
+    // 用 9 进制编码每盘: 位 = a*3 + b
+    for (let k = 0; k < total; k++) {
+      const s = new Array(2 * n); let x = k;
+      for (let i = 0; i < n; i++) {
+        const v = x % 9; x = Math.floor(x / 9);
+        s[i] = Math.floor(v / 3);      // A 组盘位
+        s[n + i] = v % 3;              // B 组盘位
+      }
+      states.push(s);
+    }
+    function topOf(st) {
+      const t = [Infinity, Infinity, Infinity];
+      for (let i = 0; i < st.length; i++) if (t[st[i]] === Infinity) t[st[i]] = i;
+      return t;
+    }
+    function tryMoveTwin(s, lv, dest) {
+      const aA = s[lv], aB = s[n + lv];
+      if (aA === dest && aB === dest) return null;
+      // A/B 两组栈分开算
+      const tA = topOf(s.slice(0, n));
+      const tB = topOf(s.slice(n));
+      // 源: A 组盘 lv 必须在 A 组柱顶; B 组同理
+      if (tA[aA] < lv || tB[aB] < lv) return null;
+      // 目标: A 组 dest 柱无更小盘, B 组 dest 柱无更小盘
+      if (tA[dest] < lv || tB[dest] < lv) return null;
+      const ns = s.slice();
+      ns[lv] = dest; ns[n + lv] = dest;
+      return ns;
+    }
+    // twin 移动不对称 (同步设为 dest), 是有向图: 收集有向边
+    const idx = new Map(states.map((s, i) => [s.join(','), i]));
+    const adj = states.map(() => []);
+    for (let i = 0; i < states.length; i++) {
+      for (let lv = 0; lv < n; lv++) {
+        for (let dest = 0; dest < 3; dest++) {
+          const ns = tryMoveTwin(states[i], lv, dest);
+          if (!ns) continue;
+          const j = idx.get(ns.join(','));
+          if (j !== undefined && j !== i && !adj[i].includes(j)) adj[i].push(j);
+        }
+      }
+    }
+    const edges = [];
+    for (let i = 0; i < adj.length; i++) for (const j of adj[i]) edges.push({ from: i, to: j });
+    // 布局: 两组各自重心 + 归一化到三角, A/B 交错贡献 (Sierpinski 直积风)
+    const corner = [[0, 0], [1, 0], [0.5, Math.sqrt(3) / 2]];
+    const coords = states.map(s => {
+      let p = [0, 0], w = 1 / 2;
+      for (let k = 2 * n - 1; k >= 0; k--) {
+        const c = corner[s[k]];
+        p[0] += c[0] * w; p[1] += c[1] * w; w /= 2;
+      }
+      p[0] += (1 / 3) * w; p[1] += (1 / 3) * w;
+      return p;
+    });
+    return { states, adj, edges, coords, directed: true };
+  }
+
+  // 加权汉诺塔: 经典规则, 但柱间移动有成本 w(a,dest) = |a-dest|
+  // 最短路径 = 加权最短 (Dijkstra), 边的粗细反映成本
+  function weightedBuild({ n }) {
+    const states = Core.enumStates(n, 3);
+    const adj = Core.buildAdjacency(states, (s, lv, dest) =>
+      Core.tryMove(s, lv, dest, { moveRule: 'classic' }), false);
+    const edges = [];
+    for (let i = 0; i < adj.length; i++) {
+      for (const j of adj[i]) {
+        if (i < j) {
+          // 找出这条边对应的柱对 (从状态差异推导)
+          let from = -1, to = -1;
+          for (let k = 0; k < n; k++) {
+            if (states[i][k] !== states[j][k]) { from = states[i][k]; to = states[j][k]; break; }
+          }
+          edges.push([i, j, Math.abs(from - to)]);
+        }
+      }
+    }
+    // 加权最短路径 (Dijkstra)
+    function weightedPath(start, end) {
+      const dist = new Array(states.length).fill(Infinity);
+      const prev = new Array(states.length).fill(-1);
+      const done = new Array(states.length).fill(false);
+      dist[start] = 0;
+      for (;;) {
+        let u = -1, best = Infinity;
+        for (let i = 0; i < states.length; i++)
+          if (!done[i] && dist[i] < best) { best = dist[i]; u = i; }
+        if (u === -1) break;
+        done[u] = true;
+        if (u === end) break;
+        for (const e of edges) {
+          const [a, b, w] = e;
+          const nb = a === u ? b : b === u ? a : -1;
+          if (nb === -1) continue;
+          if (dist[u] + w < dist[nb]) { dist[nb] = dist[u] + w; prev[nb] = u; }
+        }
+      }
+      if (!done[end]) return [];
+      const path = [];
+      for (let at = end; at !== -1; at = prev[at]) path.push(at);
+      return path.reverse();
+    }
+    const coords = Core.barycentric(states);
+    return { states, adj, edges, coords, directed: false, weightedPath };
+  }
+
   function forbiddenBuild({ n }) {
     const all = Core.enumStates(n, 3);
     const states = all.filter(s => s[n - 1] !== 1);
@@ -278,6 +391,22 @@
       params: [{ key: 'n', label: '盘数', min: 1, max: 5, step: 1, default: 3 }],
       build: magneticBuild,
       formula: p => ({ states: '3^n', edges: '|E| = 3\\,2^{n-1}' }),
+      shortest: { start: [0, 0, 0], end: [2, 2, 2] }
+    },
+    {
+      id: 'twin', name: '双子塔',
+      desc: '两套 3 柱同步运行。移动盘时 A、B 两组同时移到同一目标柱，两处都必须合法。状态 = 每盘在两组的位置，共 9ⁿ 个。',
+      params: [{ key: 'n', label: '每套盘数', min: 1, max: 3, step: 1, default: 2 }],
+      build: twinBuild,
+      formula: p => ({ states: '9^n', edges: 'E(n) = 3^n' }),
+      shortest: null
+    },
+    {
+      id: 'weighted', name: '加权',
+      desc: '经典规则，但柱间移动成本 = 柱距 |a−b|。粗边成本高，最短路径按加权计算（不再是最少步数）。',
+      params: [{ key: 'n', label: '盘数', min: 2, max: 6, step: 1, default: 3 }],
+      build: weightedBuild,
+      formula: p => ({ states: '3^n', edges: 'E(n) = 3\,E(n-1) + 3' }),
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     },
     {

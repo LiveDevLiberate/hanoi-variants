@@ -66,7 +66,8 @@
         .attr('y1', e => edgePts(e)[0][1])
         .attr('x2', e => edgePts(e)[1][0])
         .attr('y2', e => edgePts(e)[1][1])
-        .style('stroke', T.edge).style('stroke-width', 2.4)
+        .style('stroke', e => e[2] !== undefined ? (e[2] > 1 ? '#ffd700' : '#c8c8c8') : T.edge)
+        .style('stroke-width', e => e[2] !== undefined ? 1.8 + e[2] * 1.2 : 2.4)
         .style('opacity', edgeOpacity);
 
       if (directed) {
@@ -104,7 +105,9 @@
     }
 
     if (opts.showPath && data.adj && opts.start !== undefined && opts.end !== undefined) {
-      const path = G.HanoiCore.shortestPath(data.adj, opts.start, opts.end);
+      const path = data.weightedPath
+        ? data.weightedPath(opts.start, opts.end)
+        : G.HanoiCore.shortestPath(data.adj, opts.start, opts.end);
       for (let k = 0; k < path.length - 1; k++) {
         const p1 = toPx(data.coords[path[k]]), p2 = toPx(data.coords[path[k + 1]]);
         svg.append('line')
