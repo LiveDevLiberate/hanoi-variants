@@ -69,10 +69,10 @@ const Core = globalThis.HanoiCore;
 const Variants = globalThis.HanoiVariants;
 const App = globalThis.HanoiApp;
 
-assert.strictEqual(Variants.length, 7);
+assert.strictEqual(Variants.length, 8);
 const ids = Variants.map(v => v.id);
 assert.deepStrictEqual(ids,
-  ['classic', 'same-disk', 'oneway', 'linear', 'four-peg', 'magnetic', 'forbidden']);
+  ['classic', 'same-disk', 'oneway', 'linear', 'star', 'four-peg', 'magnetic', 'forbidden']);
 
 for (const v of Variants) {
   assert.strictEqual(typeof v.build, 'function', `${v.id} build`);
@@ -111,6 +111,6 @@ for (const v of Variants) {
   assert.ok(lbl, `${v.id} 标签开关存在`);
 }
 
-assert.strictEqual(svgEls.length, 7, '7 个独立 svg');
+assert.strictEqual(svgEls.length, 8, '8 个独立 svg');
 
-console.log('✓ test_app 全部通过 (7 变体单页流程 + SVG class 只读 + 坐标无 NaN)');
+console.log('✓ test_app 全部通过 (8 变体单页流程 + SVG class 只读 + 坐标无 NaN)');

@@ -42,6 +42,7 @@
     if (tp[dest] < lv) return null;
     if (opts.moveRule === 'oneway' && dest !== (a + 1) % 3) return null;
     if (opts.moveRule === 'linear' && Math.abs(a - dest) !== 1) return null;
+    if (opts.moveRule === 'star' && a !== 0 && dest !== 0) return null;
     if (opts.moveRule === 'magnetic' && tp[dest] !== Infinity
         && (tp[dest] % 2) === (lv % 2)) return null;
     const ns = s.slice();

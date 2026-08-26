@@ -111,6 +111,12 @@
       Core.tryMove(s, lv, dest, { moveRule: 'linear' }), false);
   }
 
+  function starBuild({ n }) {
+    const states = Core.enumStates(n, 3);
+    return buildGraph(states, (s, lv, dest) =>
+      Core.tryMove(s, lv, dest, { moveRule: 'star' }), false);
+  }
+
   function magneticBuild({ n }) {
     const all = Core.enumStates(n, 3);
     // 合法状态: 同一柱上相邻盘必须异极 (奇偶不同)
@@ -248,6 +254,14 @@
       params: [{ key: 'n', label: '盘数', min: 1, max: 5, step: 1, default: 3 }],
       build: linearBuild,
       formula: p => ({ states: '3^n', edges: 'd(000,222) = 3^n - 1' }),
+      shortest: { start: [0, 0, 0], end: [2, 2, 2] }
+    },
+    {
+      id: 'star', name: '星形',
+      desc: '盘只能移到中心柱（柱0）或从中心柱移出，非中心柱之间不能直接移动。移动图 = K₁,ₘ₋₁。',
+      params: [{ key: 'n', label: '盘数', min: 1, max: 5, step: 1, default: 3 }],
+      build: starBuild,
+      formula: p => ({ states: '3^n', edges: 'E(n) = 3^n - 1' }),
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     },
     {

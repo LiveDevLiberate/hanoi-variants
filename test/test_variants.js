@@ -31,6 +31,11 @@ assert.ok(ow.edges.every(e => {
 assert.deepStrictEqual(counts('linear', { n: 2 }), { states: 9, edges: 8 });
 assert.deepStrictEqual(counts('linear', { n: 3 }), { states: 27, edges: 26 });
 
+// 星形 n=2: 9/8; n=3: 27/26; n=4: 81/80 (Wolfram 验证: E = 3^n - 1)
+assert.deepStrictEqual(counts('star', { n: 2 }), { states: 9, edges: 8 });
+assert.deepStrictEqual(counts('star', { n: 3 }), { states: 27, edges: 26 });
+assert.deepStrictEqual(counts('star', { n: 4 }), { states: 81, edges: 80 });
+
 // 磁铁 n=2: 9/12; n=3: 21/24 (过滤同极相邻非法状态, Wolfram 权威验证)
 assert.deepStrictEqual(counts('magnetic', { n: 2 }), { states: 9, edges: 12 });
 assert.deepStrictEqual(counts('magnetic', { n: 3 }), { states: 21, edges: 24 });
