@@ -13,7 +13,8 @@
     const xmin = Math.min(...xs), xmax = Math.max(...xs);
     const ymin = Math.min(...ys), ymax = Math.max(...ys);
     const spanX = Math.max(xmax - xmin, 1e-6), spanY = Math.max(ymax - ymin, 1e-6);
-    const scale = Math.min((width - 2 * pad) / spanX, (height - 2 * pad) / spanY);
+    let scale = Math.min((width - 2 * pad) / spanX, (height - 2 * pad) / spanY);
+    if (!(scale > 0) || !Number.isFinite(scale)) scale = 1;
     return c => [
       pad + (c[0] - xmin) * scale + (width - 2 * pad - spanX * scale) / 2,
       pad + (c[1] - ymin) * scale + (height - 2 * pad - spanY * scale) / 2
