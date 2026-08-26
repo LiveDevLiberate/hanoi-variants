@@ -84,7 +84,7 @@
       .style('stroke', 'rgba(0,0,0,0.4)').style('stroke-width', 2);
 
     if (opts.showLabels && data.states.length <= LABEL_LIMIT) {
-      const labelSize = Math.max(5, 16 * Math.pow(50 / Math.max(data.states.length, 2), 0.3));
+      const labelSize = Math.max(4, 16 * Math.pow(50 / Math.max(data.states.length, 2), 0.45));
       svg.selectAll('text.lbl').data(data.states).enter()
         .append('text').attr('class', 'lbl')
         .attr('x', (s, i) => toPx(data.coords[i])[0])
