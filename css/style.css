@@ -17,9 +17,11 @@ body { background: var(--bg); color: var(--text);
 #app { min-height: 100vh; }
 #main { max-width: 1280px; margin: 0 auto; padding: 48px 40px 80px; }
 #page-header { margin-bottom: 48px; border-bottom: 1px solid var(--line); padding-bottom: 24px; }
-#page-header h1 { font-size: 30px; font-weight: normal;
+#header-inner { display: flex; align-items: center; gap: 24px; }
+#hanoi-logo { width: 90px; height: 68px; flex-shrink: 0; }
+#header-text h1 { font-size: 30px; font-weight: normal;
   letter-spacing: 0.04em; margin-bottom: 10px; }
-#page-header p { color: var(--dim); font-size: 14px; }
+#header-text p { color: var(--dim); font-size: 14px; }
 
 .variant-block { margin-bottom: 72px; padding-top: 24px; }
 .variant-block .v-title { font-size: 24px; font-weight: normal;
