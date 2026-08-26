@@ -90,7 +90,7 @@
     const coords = states.map(st => {
       let pt = [0, 0];
       for (let lv = nl; lv >= 1; lv--) {
-        const sc = Math.pow(0.22, nl - lv);
+        const sc = Math.pow(0.4, nl - lv);
         const bp = barPoint(st[lv - 1]);
         pt[0] += (bp[0] - center[0]) * sc; pt[1] += (bp[1] - center[1]) * sc;
       }
