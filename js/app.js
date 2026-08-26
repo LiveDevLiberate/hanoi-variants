@@ -45,10 +45,9 @@
     st.data = v.build(buildParams(v));
     const svg = document.getElementById('graph-' + v.id);
     const opts = { showLabels: st.showLabels, showPath: st.showPath };
-    if (v.shortest && st.data.states.length <= 5000) {
-      const startS = v.shortest.start, endS = v.shortest.end;
-      opts.start = st.data.states.findIndex(s => JSON.stringify(s) === JSON.stringify(startS));
-      opts.end = st.data.states.findIndex(s => JSON.stringify(s) === JSON.stringify(endS));
+    if (st.data.states.length <= 5000 && st.data.states.length > 0) {
+      opts.start = 0;
+      opts.end = st.data.states.length - 1;
     }
     HanoiRender.renderGraph(svg, st.data, opts);
     const f = v.formula(buildParams(v));
@@ -57,7 +56,7 @@
   }
 
   function buildVariantBlock(v) {
-    const st = state[v.id] = { params: {}, showLabels: true, showPath: !!v.shortest, data: null };
+    const st = state[v.id] = { params: {}, showLabels: false, showPath: true, data: null };
     v.params.forEach(pp => { st.params[pp.key] = pp.default; });
 
     const block = document.createElement('section');
@@ -96,15 +95,14 @@
 
     const lblWrap = document.createElement('div');
     lblWrap.className = 'control';
-    lblWrap.innerHTML = `<label><input type="checkbox" id="chk-labels-${v.id}" checked> 标签</label>`;
+    lblWrap.innerHTML = `<label><input type="checkbox" id="chk-labels-${v.id}"> 标签</label>`;
     lblWrap.querySelector('input').addEventListener('change', e => {
       st.showLabels = e.target.checked;
       buildVariant(v);
     });
     ctrl.appendChild(lblWrap);
 
-    if (v.shortest) {
-      const spWrap = document.createElement('div');
+    const spWrap = document.createElement('div');
       spWrap.className = 'control';
       spWrap.innerHTML = `<label><input type="checkbox" id="chk-path-${v.id}" checked> 最短路径</label>`;
       spWrap.querySelector('input').addEventListener('change', e => {
@@ -112,7 +110,6 @@
         buildVariant(v);
       });
       ctrl.appendChild(spWrap);
-    }
     block.appendChild(ctrl);
 
     const gc = document.createElement('div');
