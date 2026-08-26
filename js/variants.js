@@ -219,7 +219,7 @@
       desc: '三根柱子，n 个大小不同的盘。每次移动一个盘，大盘不能压小盘。状态图 = Sierpinski 三角。',
       params: [{ key: 'n', label: '盘数', min: 1, max: 6, step: 1, default: 3 }],
       build: classicBuild,
-      formula: p => ({ states: '3^n', edges: 'E(n) = 3·E(n−1) + 3' }),
+      formula: p => ({ states: '3^n', edges: 'E(n) = 3\\,E(n-1) + 3' }),
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     },
     {
@@ -230,8 +230,8 @@
         { key: 'nl', label: '等级数', min: 1, max: 3, step: 1, default: 2 }
       ],
       build: sameDiskBuild,
-      formula: p => ({ states: `C(${p.N}+2,2)^${p.nl}`,
-        edges: `nl=2 时 E = (3/4)·N·(N+1)·(N²+N+4)` }),
+      formula: p => ({ states: `\\binom{${p.N}+2}{2}^{${p.nl}}`,
+        edges: `nl=2: E = \\tfrac{3}{4}N(N+1)(N^2+N+4)` }),
       shortest: null
     },
     {
@@ -239,7 +239,7 @@
       desc: '盘只能 A→B→C→A 单向循环移动。有向图，边带箭头。',
       params: [{ key: 'n', label: '盘数', min: 1, max: 5, step: 1, default: 3 }],
       build: onewayBuild,
-      formula: p => ({ states: '3^n', edges: '有向边，单向约束' }),
+      formula: p => ({ states: '3^n', edges: '有向边' }),
       shortest: { start: [0, 0, 0], end: [2, 2, 2], directed: true }
     },
     {
@@ -247,7 +247,7 @@
       desc: '盘只能移到相邻柱（A↔B、B↔C）。最短路径 3^n − 1 步。',
       params: [{ key: 'n', label: '盘数', min: 1, max: 5, step: 1, default: 3 }],
       build: linearBuild,
-      formula: p => ({ states: '3^n', edges: '相邻约束下的边数' }),
+      formula: p => ({ states: '3^n', edges: '最短路 = 3^n - 1' }),
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     },
     {
@@ -255,7 +255,7 @@
       desc: '四根柱子。状态图 = Sierpinski 四面体的 2D 投影。Frame–Stewart 算法。',
       params: [{ key: 'n', label: '盘数', min: 1, max: 4, step: 1, default: 2 }],
       build: fourPegBuild,
-      formula: p => ({ states: '4^n', edges: '多柱边数' }),
+      formula: p => ({ states: '4^n', edges: 'Frame\text{-}Stewart' }),
       shortest: null
     },
     {
@@ -263,7 +263,7 @@
       desc: '相邻盘必须异极相对（奇偶盘极性不同），同极不能相邻。状态图是受限子图。',
       params: [{ key: 'n', label: '盘数', min: 1, max: 5, step: 1, default: 3 }],
       build: magneticBuild,
-      formula: p => ({ states: '3^n', edges: '磁极约束下的边数' }),
+      formula: p => ({ states: '3^n', edges: '异极相邻' }),
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     },
     {
@@ -271,7 +271,7 @@
       desc: '最大盘不能放在中柱。某些状态被剔除，状态图是挖洞的子图。',
       params: [{ key: 'n', label: '盘数', min: 2, max: 5, step: 1, default: 3 }],
       build: forbiddenBuild,
-      formula: p => ({ states: '2·3^(n−1)', edges: '剔除后边数' }),
+      formula: p => ({ states: '2 \\cdot 3^{n-1}', edges: '剔除后边数' }),
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     }
   ];

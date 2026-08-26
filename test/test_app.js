@@ -2,14 +2,19 @@
 const assert = require('assert');
 
 function createElement() {
-  return {
+  const el = {
     style: {}, dataset: {}, classList: { add(){}, remove(){} },
-    innerHTML: '', textContent: '', value: '', checked: true,
+    _html: '', textContent: '', value: '', checked: true,
     children: [],
     appendChild(c) { this.children.push(c); return c; },
     remove() {}, addEventListener() {},
     querySelector() { return { addEventListener(){}, textContent:'', checked:true }; },
   };
+  Object.defineProperty(el, 'innerHTML', {
+    get() { return el._html; },
+    set(v) { el._html = v; el.textContent = v.replace(/<[^>]*>/g, ''); },
+  });
+  return el;
 }
 const elements = {};
 const svgEls = [];

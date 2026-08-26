@@ -40,6 +40,15 @@
     return p;
   }
 
+  function renderFormula(latex) {
+    if (latex && typeof katex !== 'undefined' && katex.renderToString) {
+      try {
+        return katex.renderToString(latex, { throwOnError: false, displayMode: false });
+      } catch (e) { /* fall through */ }
+    }
+    return latex || '';
+  }
+
   function buildVariant(v) {
     const st = state[v.id];
     st.data = v.build(buildParams(v));
@@ -51,8 +60,8 @@
     }
     HanoiRender.renderGraph(svg, st.data, opts);
     const f = v.formula(buildParams(v));
-    document.getElementById('stats-' + v.id).textContent =
-      `状态数 = ${st.data.states.length}（公式 ${f.states}）· 边数 = ${st.data.edges.length}（${f.edges}）`;
+    document.getElementById('stats-' + v.id).innerHTML =
+      `状态数 = ${st.data.states.length}（公式 ${renderFormula(f.states)}）· 边数 = ${st.data.edges.length}（${renderFormula(f.edges)}）`;
   }
 
   function buildVariantBlock(v) {
