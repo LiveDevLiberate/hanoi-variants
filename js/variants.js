@@ -231,7 +231,7 @@
       ],
       build: sameDiskBuild,
       formula: p => ({ states: `\\binom{${p.N}+2}{2}^{${p.nl}}`,
-        edges: `nl=2: E = \\tfrac{3}{4}N(N+1)(N^2+N+4)` }),
+        edges: `E = \\tfrac{3}{4}N(N+1)(N^2+N+4)` }),
       shortest: null
     },
     {
@@ -239,7 +239,7 @@
       desc: '盘只能 A→B→C→A 单向循环移动。有向图，边带箭头。',
       params: [{ key: 'n', label: '盘数', min: 1, max: 5, step: 1, default: 3 }],
       build: onewayBuild,
-      formula: p => ({ states: '3^n', edges: '有向边' }),
+      formula: p => ({ states: '3^n', edges: 'E(n) = 3\\,E(n-1) + 3' }),
       shortest: { start: [0, 0, 0], end: [2, 2, 2], directed: true }
     },
     {
@@ -247,7 +247,7 @@
       desc: '盘只能移到相邻柱（A↔B、B↔C）。最短路径 3^n − 1 步。',
       params: [{ key: 'n', label: '盘数', min: 1, max: 5, step: 1, default: 3 }],
       build: linearBuild,
-      formula: p => ({ states: '3^n', edges: '最短路 = 3^n - 1' }),
+      formula: p => ({ states: '3^n', edges: 'd(000,222) = 3^n - 1' }),
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     },
     {
@@ -263,7 +263,7 @@
       desc: '相邻盘必须异极相对（奇偶盘极性不同），同极不能相邻。状态图是受限子图。',
       params: [{ key: 'n', label: '盘数', min: 1, max: 5, step: 1, default: 3 }],
       build: magneticBuild,
-      formula: p => ({ states: '3^n', edges: '异极相邻' }),
+      formula: p => ({ states: '3^n', edges: '|E| = 3\\,2^{n-1}' }),
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     },
     {
@@ -271,7 +271,7 @@
       desc: '最大盘不能放在中柱。某些状态被剔除，状态图是挖洞的子图。',
       params: [{ key: 'n', label: '盘数', min: 2, max: 5, step: 1, default: 3 }],
       build: forbiddenBuild,
-      formula: p => ({ states: '2 \\cdot 3^{n-1}', edges: '剔除后边数' }),
+      formula: p => ({ states: '2 \\cdot 3^{n-1}', edges: 'E(n) = 3\\,E(n-1) + 1' }),
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     }
   ];

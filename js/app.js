@@ -60,8 +60,10 @@
     }
     HanoiRender.renderGraph(svg, st.data, opts);
     const f = v.formula(buildParams(v));
-    document.getElementById('stats-' + v.id).innerHTML =
-      `状态数 = ${st.data.states.length}（公式 ${renderFormula(f.states)}）· 边数 = ${st.data.edges.length}（${renderFormula(f.edges)}）`;
+    const sEl = document.getElementById('stats-' + v.id);
+    sEl.innerHTML =
+      `<div>状态数 = ${st.data.states.length}&nbsp;&nbsp;<span class="formula">${renderFormula(f.states)}</span></div>` +
+      `<div>边数 = ${st.data.edges.length}&nbsp;&nbsp;<span class="formula">${renderFormula(f.edges)}</span></div>`;
   }
 
   function buildVariantBlock(v) {

@@ -31,7 +31,9 @@ body { background: var(--bg); color: var(--text);
   letter-spacing: 0.03em; margin-bottom: 6px; }
 .variant-block .v-desc { color: var(--dim); font-size: 13px; margin-bottom: 14px; }
 .variant-block .v-stats { color: var(--accent); font-size: 13px;
-  margin-bottom: 12px; font-style: italic; }
+  margin-bottom: 12px; }
+.variant-block .v-stats > div { margin-bottom: 2px; }
+.variant-block .formula { color: var(--text); font-style: normal; }
 
 .v-controls { display: flex; gap: 28px; flex-wrap: wrap; align-items: center;
   margin: 4px 0 20px; padding: 12px 0; border-top: 1px solid var(--line);
