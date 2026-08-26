@@ -10,6 +10,7 @@
   --danger: #ff6464;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
+html { zoom: 0.75; }
 body { background: var(--bg); color: var(--text);
   font-family: "Moon Stars Kai HW", "Georgia", "Noto Serif CJK SC",
     "Songti SC", "SimSun", serif;
