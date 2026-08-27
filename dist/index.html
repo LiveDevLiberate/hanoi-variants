@@ -141,6 +141,23 @@ body { background: var(--bg); color: var(--text);
     inset 0 0 8px rgba(212, 175, 55, 0.10); }
 #back-top:hover polygon { stroke: var(--gold-1);
   filter: drop-shadow(0 0 3px rgba(246, 226, 122, 0.8)); }
+
+/* 页脚: 旋转 Sierpinski 三角 + 联系方式 */
+#site-footer { text-align: center; padding: 56px 0 8px;
+  border-top: 1px solid var(--line); margin-top: 16px; }
+#footer-tri { width: 52px; height: 52px; margin: 0 auto 18px;
+  display: block; animation: tri-spin 14s linear infinite;
+  transform-origin: 50% 63.5%; }
+@keyframes tri-spin { from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); } }
+#footer-tri polygon { stroke: var(--gold-3);
+  filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.4)); }
+.footer-contact { font-size: 13px; margin-bottom: 8px; }
+.footer-contact a { color: var(--gold-2); text-decoration: none;
+  letter-spacing: 0.03em; transition: color .15s, text-shadow .15s; }
+.footer-contact a:hover { color: var(--gold-1);
+  text-shadow: 0 0 6px rgba(212, 175, 55, 0.5); }
+.footer-note { color: var(--dim2); font-size: 12px; }
 </style>
 <link rel="stylesheet" href="https://cn-font.claude-code-best.win/packages/moon-stars-kai/dist/MoonStarsKaiHW-Bold/result.css">
   <link rel="stylesheet" href="https://cn-font.claude-code-best.win/packages/ysbzt/dist/%E5%B3%84%E5%B1%B1%E7%A2%91%E7%AF%86%E4%BD%93/result.css">
@@ -187,6 +204,22 @@ body { background: var(--bg); color: var(--text);
       <section id="papers"></section>
     </main>
   </div>
+  <footer id="site-footer">
+    <svg id="footer-tri" viewBox="0 0 32 32" aria-hidden="true">
+      <defs>
+        <linearGradient id="gold-edge-footer" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stop-color="#996515"/>
+          <stop offset="50%" stop-color="#e5b84b"/>
+          <stop offset="100%" stop-color="#ffdf73"/>
+        </linearGradient>
+      </defs>
+      <polygon points="16,3 29,29 3,29" fill="none" stroke="url(#gold-edge-footer)" stroke-width="1.2"/>
+      <polygon points="16,11 22.5,24 9.5,24" fill="none" stroke="url(#gold-edge-footer)" stroke-width="0.9"/>
+      <polygon points="16,18.5 19.1,24 12.9,24" fill="none" stroke="url(#gold-edge-footer)" stroke-width="0.7"/>
+    </svg>
+    <p class="footer-contact"><a href="mailto:roger.sx@outlook.com">roger.sx@outlook.com</a></p>
+    <p class="footer-note">版权原因，无法使用《众神的三角力量》音乐 :/，但是你可以自己播放 :D，Enjoy!</p>
+  </footer>
   <button id="back-top" type="button" aria-label="回到顶部" title="回到顶部">
     <svg viewBox="0 0 32 32" aria-hidden="true">
       <defs>

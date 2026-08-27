@@ -134,3 +134,20 @@ body { background: var(--bg); color: var(--text);
     inset 0 0 8px rgba(212, 175, 55, 0.10); }
 #back-top:hover polygon { stroke: var(--gold-1);
   filter: drop-shadow(0 0 3px rgba(246, 226, 122, 0.8)); }
+
+/* 页脚: 旋转 Sierpinski 三角 + 联系方式 */
+#site-footer { text-align: center; padding: 56px 0 8px;
+  border-top: 1px solid var(--line); margin-top: 16px; }
+#footer-tri { width: 52px; height: 52px; margin: 0 auto 18px;
+  display: block; animation: tri-spin 14s linear infinite;
+  transform-origin: 50% 63.5%; }
+@keyframes tri-spin { from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); } }
+#footer-tri polygon { stroke: var(--gold-3);
+  filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.4)); }
+.footer-contact { font-size: 13px; margin-bottom: 8px; }
+.footer-contact a { color: var(--gold-2); text-decoration: none;
+  letter-spacing: 0.03em; transition: color .15s, text-shadow .15s; }
+.footer-contact a:hover { color: var(--gold-1);
+  text-shadow: 0 0 6px rgba(212, 175, 55, 0.5); }
+.footer-note { color: var(--dim2); font-size: 12px; }
