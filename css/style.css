@@ -8,6 +8,8 @@
   --line: #1f1f1f;        /* 分隔线（极淡灰） */
   --accent: #ffd700;      /* 强调 = 金色 */
   --danger: #ff6464;
+  --dim2: #6f6f6f;        /* 更暗的次级文字（引用） */
+  --mono: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { zoom: 0.75; }
@@ -30,6 +32,11 @@ body { background: var(--bg); color: var(--text);
 .variant-block .v-title { font-size: 24px; font-weight: normal;
   letter-spacing: 0.03em; margin-bottom: 6px; }
 .variant-block .v-desc { color: var(--dim); font-size: 13px; margin-bottom: 14px; }
+.variant-block .v-ref { color: var(--dim2); font-size: 11px; margin: -10px 0 14px;
+  font-family: var(--mono); opacity: 0.75; }
+.variant-block .v-ref a { color: var(--dim2); text-decoration: underline;
+  text-underline-offset: 2px; }
+.variant-block .v-ref a:hover { color: var(--accent); }
 .variant-block .v-stats { color: var(--accent); font-size: 13px;
   margin-bottom: 12px; }
 .variant-block .v-stats > div { margin-bottom: 2px; }

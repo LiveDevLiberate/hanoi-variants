@@ -83,6 +83,23 @@
     desc.textContent = v.desc;
     block.appendChild(desc);
 
+    if (v.ref) {
+      const m = v.ref.match(/arXiv:([\w.\/-]+)/);
+      const ref = document.createElement('p');
+      ref.className = 'v-ref';
+      if (m) {
+        const link = document.createElement('a');
+        link.href = 'https://arxiv.org/abs/' + m[1];
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.textContent = v.ref;
+        ref.appendChild(link);
+      } else {
+        ref.textContent = v.ref;
+      }
+      block.appendChild(ref);
+    }
+
     const stats = document.createElement('div');
     stats.className = 'v-stats';
     stats.id = 'stats-' + v.id;

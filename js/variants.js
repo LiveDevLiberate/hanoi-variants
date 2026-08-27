@@ -375,6 +375,7 @@
       params: [{ key: 'n', label: '盘数', min: 1, max: 5, step: 1, default: 3 }],
       build: starBuild,
       formula: p => ({ states: '3^n', edges: 'E(n) = 3^n - 1' }),
+      ref: 'E.-M. Mehiri, On the restricted Hanoi graphs, arXiv:2304.03857',
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     },
     {
@@ -391,6 +392,7 @@
       params: [{ key: 'n', label: '盘数', min: 1, max: 5, step: 1, default: 3 }],
       build: magneticBuild,
       formula: p => ({ states: '3^n', edges: '|E| = 3\\,2^{n-1}' }),
+      ref: 'U. Levy, The Magnetic Tower of Hanoi, arXiv:1003.0225',
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     },
     {
@@ -399,6 +401,7 @@
       params: [{ key: 'n', label: '每套盘数', min: 1, max: 3, step: 1, default: 2 }],
       build: twinBuild,
       formula: p => ({ states: '9^n', edges: 'E(n) = 3^n' }),
+      ref: 'Z. Sunic, Twin Towers of Hanoi, arXiv:1108.4494',
       shortest: null
     },
     {
@@ -407,6 +410,7 @@
       params: [{ key: 'n', label: '盘数', min: 2, max: 6, step: 1, default: 3 }],
       build: weightedBuild,
       formula: p => ({ states: '3^n', edges: 'E(n) = 3\,E(n-1) + 3' }),
+      ref: 'E.-M. Mehiri & H. Belbachir, The weighted Tower of Hanoi, arXiv:2208.06705',
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     },
     {
