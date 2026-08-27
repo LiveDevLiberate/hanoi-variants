@@ -24,20 +24,20 @@ html { zoom: 0.75; }
 body { background: var(--bg); color: var(--text);
   font-family: "Moon Stars Kai HW", "Georgia", "Noto Serif CJK SC",
     "Songti SC", "SimSun", serif;
-  line-height: 1.7; font-size: 15px; }
+  line-height: 1.7; font-size: 18px; }
 #app { min-height: 100vh; }
 #main { max-width: 1280px; margin: 0 auto; padding: 48px 40px 80px; }
 #page-header { margin-bottom: 48px; border-bottom: 1px solid var(--line); padding-bottom: 24px; }
 #header-inner { display: flex; align-items: center; gap: 24px; }
 #hanoi-logo { width: 90px; height: 68px; flex-shrink: 0; }
-#header-text h1 { font-size: 30px; font-weight: normal;
+#header-text h1 { font-size: 36px; font-weight: normal;
   letter-spacing: 0.04em; margin-bottom: 2px; }
-#header-text .subtitle { color: var(--dim); font-size: 15px;
+#header-text .subtitle { color: var(--dim); font-size: 18px;
   letter-spacing: 0.12em;
   font-family: "峄山碑篆体", "Moon Stars Kai HW", serif; }
 #lang-switch { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 #lang-switch #lang-btn { background: none; border: 1px solid var(--dim2);
-  color: var(--text); font-size: 12px; padding: 3px 10px; cursor: pointer;
+  color: var(--text); font-size: 14px; padding: 3px 10px; cursor: pointer;
   border-radius: 3px; font-family: inherit; letter-spacing: 0.05em; }
 #lang-switch #lang-btn:hover { border-color: var(--gold-2);
   color: var(--gold-1);
@@ -45,19 +45,19 @@ body { background: var(--bg); color: var(--text);
   box-shadow: 0 0 10px rgba(212, 175, 55, 0.18),
     inset 0 0 6px rgba(212, 175, 55, 0.12);
   background: linear-gradient(180deg, rgba(246, 226, 122, 0.10), rgba(138, 109, 28, 0.05)); }
-#lang-switch #lang-name { color: var(--dim2); font-size: 12px; }
+#lang-switch #lang-name { color: var(--dim2); font-size: 14px; }
 
 .variant-block { margin-bottom: 72px; padding-top: 24px; }
-.variant-block .v-title { font-size: 24px; font-weight: normal;
+.variant-block .v-title { font-size: 29px; font-weight: normal;
   letter-spacing: 0.03em; margin-bottom: 6px; }
-.variant-block .v-desc { color: var(--dim); font-size: 13px; margin-bottom: 14px; }
-.variant-block .v-ref { color: var(--dim2); font-size: 11px; margin: -10px 0 14px;
+.variant-block .v-desc { color: var(--dim); font-size: 16px; margin-bottom: 14px; }
+.variant-block .v-ref { color: var(--dim2); font-size: 13px; margin: -10px 0 14px;
   font-family: var(--mono); opacity: 0.75; }
 .variant-block .v-ref a { color: var(--dim2); text-decoration: underline;
   text-underline-offset: 2px; }
 .variant-block .v-ref a:hover { color: var(--gold-1);
   text-shadow: 0 0 5px rgba(212, 175, 55, 0.5); }
-.variant-block .v-stats { color: var(--gold-2); font-size: 13px;
+.variant-block .v-stats { color: var(--gold-2); font-size: 16px;
   margin-bottom: 12px; }
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
   .variant-block .v-stats {
@@ -73,7 +73,7 @@ body { background: var(--bg); color: var(--text);
 .v-controls { display: flex; gap: 28px; flex-wrap: wrap; align-items: center;
   margin: 4px 0 20px; padding: 12px 0; border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line); }
-.control label { font-size: 13px; color: var(--dim); letter-spacing: 0.04em; }
+.control label { font-size: 16px; color: var(--dim); letter-spacing: 0.04em; }
 .control .val { color: var(--gold-1); font-weight: normal; margin: 0 6px; }
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
   .control .val {
@@ -92,15 +92,15 @@ body { background: var(--bg); color: var(--text);
 #graph { width: 100%; height: auto; aspect-ratio: 18 / 10; display: block; }
 .node { cursor: pointer; }
 .tooltip { position: absolute; background: #000; color: #fff;
-  border: 1px solid var(--line); padding: 8px 12px; font-size: 12px;
+  border: 1px solid var(--line); padding: 8px 12px; font-size: 14px;
   pointer-events: none; display: none; }
 
 #papers { margin-top: 80px; border-top: 1px solid var(--line); padding-top: 28px; }
-#papers h2 { font-size: 15px; font-weight: normal; letter-spacing: 0.1em;
+#papers h2 { font-size: 18px; font-weight: normal; letter-spacing: 0.1em;
   color: var(--dim); text-transform: uppercase; margin-bottom: 16px; }
-#papers h3 { font-size: 14px; font-weight: normal; margin: 18px 0 8px;
+#papers h3 { font-size: 17px; font-weight: normal; margin: 18px 0 8px;
   color: var(--text); }
-#papers .paper { font-size: 13px; color: var(--dim); margin-bottom: 6px;
+#papers .paper { font-size: 16px; color: var(--dim); margin-bottom: 6px;
   padding-left: 12px; border-left: 1px solid var(--line); }
 #papers .paper a { color: var(--gold-2); text-decoration: none; }
 #papers .paper a:hover { text-decoration: underline; color: var(--gold-1);
@@ -110,7 +110,7 @@ body { background: var(--bg); color: var(--text);
 #section-nav { display: flex; flex-wrap: wrap; gap: 8px;
   margin-bottom: 32px; }
 #section-nav .nav-btn { background: none; border: 1px solid var(--line);
-  color: var(--dim); font-size: 13px; padding: 4px 12px; cursor: pointer;
+  color: var(--dim); font-size: 16px; padding: 4px 12px; cursor: pointer;
   border-radius: 3px; font-family: inherit; letter-spacing: 0.03em;
   transition: color .15s, border-color .15s; }
 #section-nav .nav-btn:hover { color: var(--gold-1);
@@ -145,9 +145,9 @@ body { background: var(--bg); color: var(--text);
   to { transform: rotate(360deg); } }
 #footer-tri polygon { stroke: var(--gold-3);
   filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.4)); }
-.footer-contact { font-size: 13px; margin-bottom: 8px; }
+.footer-contact { font-size: 16px; margin-bottom: 8px; }
 .footer-contact a { color: var(--gold-2); text-decoration: none;
   letter-spacing: 0.03em; transition: color .15s, text-shadow .15s; }
 .footer-contact a:hover { color: var(--gold-1);
   text-shadow: 0 0 6px rgba(212, 175, 55, 0.5); }
-.footer-note { color: var(--dim2); font-size: 12px; }
+.footer-note { color: var(--dim2); font-size: 14px; }
