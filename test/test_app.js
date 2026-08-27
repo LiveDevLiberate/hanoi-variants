@@ -9,6 +9,7 @@ function createElement() {
     appendChild(c) { this.children.push(c); return c; },
     remove() {}, addEventListener() {},
     querySelector() { return { addEventListener(){}, textContent:'', checked:true }; },
+    querySelectorAll() { return []; },
   };
   Object.defineProperty(el, 'innerHTML', {
     get() { return el._html; },
@@ -38,10 +39,13 @@ function makeSvg() {
   return el;
 }
 global.document = {
+  documentElement: { lang: '' },
   getElementById: getEl,
   createElement: createElement,
   createElementNS: makeSvg,
   addEventListener() {},
+  querySelector() { return { addEventListener(){}, textContent:'', value:'' }; },
+  querySelectorAll() { return []; },
 };
 global.window = global;
 
@@ -112,5 +116,16 @@ for (const v of Variants) {
 }
 
 assert.strictEqual(svgEls.length, 10, '10 个独立 svg');
+
+// 双语: 默认中文, 切英文后变体标题切换
+assert.strictEqual(App.getLang(), 'zh', '默认中文');
+const firstTitle = () => getEl('variants').children[0]?.children[0]?.textContent || '';
+assert.ok(getEl('variants').children.length === 10, '10 个变体块');
+const zhTitle = firstTitle();
+App.setLang('en');
+assert.strictEqual(App.getLang(), 'en', '切英文');
+App.setLang('zh');
+assert.strictEqual(App.getLang(), 'zh', '切回中文');
+assert.strictEqual(document.documentElement.lang, 'zh-CN', 'lang 属性中文');
 
 console.log('✓ test_app 全部通过 (10 变体单页流程 + SVG class 只读 + 坐标无 NaN)');

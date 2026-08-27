@@ -34,6 +34,12 @@ body { background: var(--bg); color: var(--text);
 #header-text .subtitle { color: var(--dim); font-size: 15px;
   letter-spacing: 0.12em;
   font-family: "峄山碑篆体", "Moon Stars Kai HW", serif; }
+#lang-switch { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+#lang-switch #lang-btn { background: none; border: 1px solid var(--dim2);
+  color: var(--text); font-size: 12px; padding: 3px 10px; cursor: pointer;
+  border-radius: 3px; font-family: inherit; letter-spacing: 0.05em; }
+#lang-switch #lang-btn:hover { border-color: var(--accent); color: var(--accent); }
+#lang-switch #lang-name { color: var(--dim2); font-size: 12px; }
 
 .variant-block { margin-bottom: 72px; padding-top: 24px; }
 .variant-block .v-title { font-size: 24px; font-weight: normal;
@@ -98,8 +104,12 @@ body { background: var(--bg); color: var(--text);
             <rect x="94" y="50" width="12" height="6" rx="1" fill="#ffd700"/>
           </svg>
           <div id="header-text">
-            <h1>汉诺塔</h1>
-            <p class="subtitle">众神的三角谜团</p>
+            <h1 id="hanoi-title">汉诺塔</h1>
+            <p class="subtitle" id="hanoi-sub">众神的三角谜团</p>
+          </div>
+          <div id="lang-switch">
+            <button id="lang-btn" type="button" aria-label="切换语言">EN</button>
+            <span id="lang-name">中文</span>
           </div>
         </div>
       </header>
@@ -581,19 +591,19 @@ body { background: var(--bg); color: var(--text);
 
   return [
     {
-      id: 'classic', name: '经典 3 柱',
-      desc: '三根柱子，n 个大小不同的盘。每次移动一个盘，大盘不能压小盘。状态图 = Sierpinski 三角。',
-      params: [{ key: 'n', label: '盘数', min: 1, max: 6, step: 1, default: 3 }],
+      id: 'classic', name: { zh: '经典 3 柱', en: 'Classic 3-Peg' },
+      desc: { zh: '三根柱子，n 个大小不同的盘。每次移动一个盘，大盘不能压小盘。状态图 = Sierpinski 三角。', en: 'Three pegs, n disks of distinct sizes. Move one disk at a time; a larger disk can never sit on a smaller one. State graph = Sierpinski gasket.' },
+      params: [{ key: 'n', label: { zh: '盘数', en: 'Disks' }, min: 1, max: 6, step: 1, default: 1 }],
       build: classicBuild,
       formula: p => ({ states: '3^n', edges: 'E(n) = 3\\,E(n-1) + 3' }),
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     },
     {
-      id: 'same-disk', name: '相同碟片',
-      desc: '每级 N 个相同大小的盘，nl 个等级。同大小盘互换算同一状态，每级 C(N+2,2) 种分布。',
+      id: 'same-disk', name: { zh: '相同碟片', en: 'Same-Size Disks' },
+      desc: { zh: '每级 N 个相同大小的盘，nl 个等级。同大小盘互换算同一状态，每级 C(N+2,2) 种分布。', en: 'N equal disks per level, nl levels. Permuting disks of equal size gives the same state; C(N+2,2) distributions per level.' },
       params: [
-        { key: 'N', label: '每级碟数', min: 1, max: 4, step: 1, default: 2 },
-        { key: 'nl', label: '等级数', min: 1, max: 3, step: 1, default: 2 }
+        { key: 'N', label: { zh: '每级碟数', en: 'Disks/level' }, min: 1, max: 4, step: 1, default: 1 },
+        { key: 'nl', label: { zh: '等级数', en: 'Levels' }, min: 1, max: 3, step: 1, default: 1 }
       ],
       build: sameDiskBuild,
       formula: p => ({ states: `\\binom{${p.N}+2}{2}^{${p.nl}}`,
@@ -601,69 +611,69 @@ body { background: var(--bg); color: var(--text);
       shortest: null
     },
     {
-      id: 'oneway', name: '单向循环',
-      desc: '盘只能 A→B→C→A 单向循环移动。有向图，边带箭头。',
-      params: [{ key: 'n', label: '盘数', min: 1, max: 5, step: 1, default: 3 }],
+      id: 'oneway', name: { zh: '单向循环', en: 'One-Way Cycle' },
+      desc: { zh: '盘只能 A→B→C→A 单向循环移动。有向图，边带箭头。', en: 'Disks may move only in the cycle A→B→C→A. Directed graph with arrows on edges.' },
+      params: [{ key: 'n', label: { zh: '盘数', en: 'Disks' }, min: 1, max: 5, step: 1, default: 1 }],
       build: onewayBuild,
       formula: p => ({ states: '3^n', edges: 'E(n) = 3\\,E(n-1) + 3' }),
       shortest: { start: [0, 0, 0], end: [2, 2, 2], directed: true }
     },
     {
-      id: 'linear', name: '线性相邻',
-      desc: '盘只能移到相邻柱（A↔B、B↔C）。最短路径 3^n − 1 步。',
-      params: [{ key: 'n', label: '盘数', min: 1, max: 5, step: 1, default: 3 }],
+      id: 'linear', name: { zh: '线性相邻', en: 'Linear / Adjacent' },
+      desc: { zh: '盘只能移到相邻柱（A↔B、B↔C）。最短路径 3^n − 1 步。', en: 'Disks move only between adjacent pegs (A↔B, B↔C). Shortest path takes 3^n − 1 moves.' },
+      params: [{ key: 'n', label: { zh: '盘数', en: 'Disks' }, min: 1, max: 5, step: 1, default: 1 }],
       build: linearBuild,
       formula: p => ({ states: '3^n', edges: 'd(000,222) = 3^n - 1' }),
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     },
     {
-      id: 'star', name: '星形',
-      desc: '盘只能移到中心柱（柱0）或从中心柱移出，非中心柱之间不能直接移动。移动图 = K₁,ₘ₋₁。',
-      params: [{ key: 'n', label: '盘数', min: 1, max: 5, step: 1, default: 3 }],
+      id: 'star', name: { zh: '星形', en: 'Star' },
+      desc: { zh: '盘只能移到中心柱（柱0）或从中心柱移出，非中心柱之间不能直接移动。移动图 = K₁,ₘ₋₁。', en: 'Disks move only to/from the central peg (peg 0); non-central pegs cannot exchange directly. Movement graph = K₁,ₘ₋₁.' },
+      params: [{ key: 'n', label: { zh: '盘数', en: 'Disks' }, min: 1, max: 5, step: 1, default: 1 }],
       build: starBuild,
       formula: p => ({ states: '3^n', edges: 'E(n) = 3^n - 1' }),
       ref: 'E.-M. Mehiri, On the restricted Hanoi graphs, arXiv:2304.03857',
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     },
     {
-      id: 'four-peg', name: '4 柱',
-      desc: '四根柱子。状态图 = Sierpinski 四面体的 2D 投影。Frame–Stewart 算法。',
-      params: [{ key: 'n', label: '盘数', min: 1, max: 4, step: 1, default: 2 }],
+      id: 'four-peg', name: { zh: '4 柱', en: 'Four Pegs' },
+      desc: { zh: '四根柱子。状态图 = Sierpinski 四面体的 2D 投影。Frame–Stewart 算法。', en: 'Four pegs. State graph = 2D projection of the Sierpinski tetrahedron. Frame–Stewart algorithm.' },
+      params: [{ key: 'n', label: { zh: '盘数', en: 'Disks' }, min: 1, max: 4, step: 1, default: 1 }],
       build: fourPegBuild,
       formula: p => ({ states: '4^n', edges: 'Frame\text{-}Stewart' }),
       shortest: null
     },
     {
-      id: 'magnetic', name: '磁铁',
-      desc: '相邻盘必须异极相对（奇偶盘极性不同），同极不能相邻。状态图是受限子图。',
-      params: [{ key: 'n', label: '盘数', min: 1, max: 5, step: 1, default: 3 }],
+      id: 'magnetic', name: { zh: '磁铁', en: 'Magnetic' },
+      desc: { zh: '相邻盘必须异极相对（奇偶盘极性不同），同极不能相邻。状态图是受限子图。', en: 'Adjacent disks must have opposite polarity (parity of disk index differs); equal poles cannot be neighbors. State graph is a restricted subgraph.' },
+      params: [{ key: 'n', label: { zh: '盘数', en: 'Disks' }, min: 1, max: 5, step: 1, default: 1 }],
       build: magneticBuild,
       formula: p => ({ states: '3^n', edges: '|E| = 3\\,2^{n-1}' }),
       ref: 'U. Levy, The Magnetic Tower of Hanoi, arXiv:1003.0225',
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     },
     {
-      id: 'twin', name: '双子塔',
-      desc: '两套 3 柱同步运行。移动盘时 A、B 两组同时移到同一目标柱，两处都必须合法。状态 = 每盘在两组的位置，共 9ⁿ 个。',
-      params: [{ key: 'n', label: '每套盘数', min: 1, max: 3, step: 1, default: 2 }],
+      id: 'twin', name: { zh: '双子塔', en: 'Twin Towers' },
+      desc: { zh: '两套 3 柱同步运行。移动盘时 A、B 两组同时移到同一目标柱，两处都必须合法。状态 = 每盘在两组的位置，共 9ⁿ 个。', en: 'Two coupled sets of 3 pegs run in sync. Moving a disk transfers it to the same target peg in both sets; both moves must be legal. State = position in both sets per disk, 9ⁿ total.' },
+      params: [{ key: 'n', label: { zh: '每套盘数', en: 'Disks/set' }, min: 1, max: 3, step: 1, default: 1 }],
       build: twinBuild,
       formula: p => ({ states: '9^n', edges: 'E(n) = 3^n' }),
       ref: 'Z. Sunic, Twin Towers of Hanoi, arXiv:1108.4494',
       shortest: null
     },
     {
-      id: 'weighted', name: '加权',
-      desc: '经典规则，但柱间移动成本 = 柱距 |a−b|。粗边成本高，最短路径按加权计算（不再是最少步数）。',
-      params: [{ key: 'n', label: '盘数', min: 2, max: 6, step: 1, default: 3 }],
+      id: 'weighted', name: { zh: '加权', en: 'Weighted' },
+      desc: { zh: '经典规则，但柱间移动成本 = 柱距 |a−b|。粗边成本高，最短路径按加权计算（不再是最少步数）。', en: 'Classic rules, but moving between pegs costs the peg distance |a−b|. Thick edges are costly; shortest path is computed with weights (not minimal moves).' },
+      params: [{ key: 'n', label: { zh: '盘数', en: 'Disks' }, min: 2, max: 6, step: 1, default: 2 }],
       build: weightedBuild,
       formula: p => ({ states: '3^n', edges: 'E(n) = 3\,E(n-1) + 3' }),
       ref: 'E.-M. Mehiri & H. Belbachir, The weighted Tower of Hanoi, arXiv:2208.06705',
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     },
     {
-      id: 'forbidden', name: '禁止状态',
-      desc: '最大盘不能放在中柱。某些状态被剔除，状态图是挖洞的子图。',
-      params: [{ key: 'n', label: '盘数', min: 2, max: 5, step: 1, default: 3 }],
+      id: 'forbidden', name: { zh: '禁止状态', en: 'Forbidden States' },
+      desc: { zh: '最大盘不能放在中柱。某些状态被剔除，状态图是挖洞的子图。', en: 'The largest disk cannot rest on the middle peg. Some states are removed; the state graph is a subgraph with holes.' },
+      params: [{ key: 'n', label: { zh: '盘数', en: 'Disks' }, min: 2, max: 5, step: 1, default: 2 }],
       build: forbiddenBuild,
       formula: p => ({ states: '2 \\cdot 3^{n-1}', edges: 'E(n) = 3\\,E(n-1) + 1' }),
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
@@ -804,41 +814,100 @@ body { background: var(--bg); color: var(--text);
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
   <script>
-/* app.js — 应用逻辑 (UMD): 所有变体单页展示 */
+/* app.js — 应用逻辑 (UMD): 所有变体单页展示, 中英双语切换 */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory();
   else root.HanoiApp = factory();
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
+  const I18N = {
+    zh: {
+      pageTitle: '汉诺塔 — 众神的三角谜团',
+      headerTitle: '汉诺塔',
+      headerSub: '众神的三角谜团',
+      papersTitle: '参考文献',
+      link: ' [链接]',
+      statesLabel: '状态数',
+      edgesLabel: '边数',
+      labelToggle: ' 标签',
+      pathToggle: ' 最短路径',
+      langName: '中文',
+      langSwitchTo: 'EN',
+    },
+    en: {
+      pageTitle: 'Tower of Hanoi — The Triangle Riddle of the Gods',
+      headerTitle: 'Tower of Hanoi',
+      headerSub: 'The Triangle Riddle of the Gods',
+      papersTitle: 'References',
+      link: ' [link]',
+      statesLabel: 'states',
+      edgesLabel: 'edges',
+      labelToggle: ' labels',
+      pathToggle: ' shortest path',
+      langName: 'English',
+      langSwitchTo: '中',
+    }
+  };
+
   const PAPERS = [
-    { group: '奠基', items: [
-      { text: 'É. Lucas, Récréations Mathématiques vol. III, 1893 — 汉诺塔原始出处' },
-      { text: 'A.M. Hinz et al., The Tower of Hanoi – Myths and Maths, Springer, 2013 — 权威专著' }
+    { group: { zh: '奠基', en: 'Foundations' }, items: [
+      { text: { zh: 'É. Lucas, Récréations Mathématiques vol. III, 1893 — 汉诺塔原始出处',
+                en: 'É. Lucas, Récréations Mathématiques vol. III, 1893 — original Hanoi source' } },
+      { text: { zh: 'A.M. Hinz et al., The Tower of Hanoi – Myths and Maths, Springer, 2013 — 权威专著',
+                en: 'A.M. Hinz et al., The Tower of Hanoi – Myths and Maths, Springer, 2013 — authoritative monograph' } }
     ]},
-    { group: 'Sierpinski 同构', items: [
-      { text: 'I. Stewart, Le lion, le lama et la laitue, Pour la Science 142, 1989 — 首次提出汉诺塔图 ≅ Sierpinski 垫片' },
-      { text: 'A.M. Hinz & A. Schief, The average distance on the Sierpiński gasket, Probab. Theory Related Fields 87, 1990' },
-      { text: 'D. Romik, Shortest paths in the Tower of Hanoi, arXiv:math/0310109',
+    { group: { zh: 'Sierpinski 同构', en: 'Sierpinski Isomorphism' }, items: [
+      { text: { zh: 'I. Stewart, Le lion, le lama et la laitue, Pour la Science 142, 1989 — 首次提出汉诺塔图 ≅ Sierpinski 垫片',
+                en: 'I. Stewart, Le lion, le lama et la laitue, Pour la Science 142, 1989 — first to identify Hanoi graphs ≅ Sierpinski gasket' } },
+      { text: { zh: 'A.M. Hinz & A. Schief, The average distance on the Sierpiński gasket, Probab. Theory Related Fields 87, 1990',
+                en: 'A.M. Hinz & A. Schief, The average distance on the Sierpiński gasket, Probab. Theory Related Fields 87, 1990' } },
+      { text: { zh: 'D. Romik, Shortest paths in the Tower of Hanoi, arXiv:math/0310109',
+                en: 'D. Romik, Shortest paths in the Tower of Hanoi, arXiv:math/0310109' },
         url: 'https://arxiv.org/abs/math/0310109' }
     ]},
-    { group: '多柱 / Frame–Stewart', items: [
-      { text: 'H.E. Dudeney, The Canterbury Puzzles, 1908 — 4柱问题 (Reve\'s Puzzle)' },
-      { text: 'J.S. Frame & B.M. Stewart, Amer. Math. Monthly 48, 1941 — Frame–Stewart 算法' },
-      { text: 'X. Chen & J. Shen, On the Frame–Stewart conjecture, SIAM J. Comput. 33, 2004',
+    { group: { zh: '多柱 / Frame–Stewart', en: 'Multiple Pegs / Frame–Stewart' }, items: [
+      { text: { zh: "H.E. Dudeney, The Canterbury Puzzles, 1908 — 4柱问题 (Reve's Puzzle)",
+                en: "H.E. Dudeney, The Canterbury Puzzles, 1908 — the four-peg problem (Reve's Puzzle)" } },
+      { text: { zh: 'J.S. Frame & B.M. Stewart, Amer. Math. Monthly 48, 1941 — Frame–Stewart 算法',
+                en: 'J.S. Frame & B.M. Stewart, Amer. Math. Monthly 48, 1941 — Frame–Stewart algorithm' } },
+      { text: { zh: 'X. Chen & J. Shen, On the Frame–Stewart conjecture, SIAM J. Comput. 33, 2004',
+                en: 'X. Chen & J. Shen, On the Frame–Stewart conjecture, SIAM J. Comput. 33, 2004' },
         url: 'https://doi.org/10.1137/S0097539703431019' },
-      { text: 'T. Bousch, La quatrième tour de Hanoï, Bull. Belg. Math. Soc. 21, 2014 — 证明4柱情形',
+      { text: { zh: 'T. Bousch, La quatrième tour de Hanoï, Bull. Belg. Math. Soc. 21, 2014 — 证明4柱情形',
+                en: 'T. Bousch, La quatrième tour de Hanoï, Bull. Belg. Math. Soc. 21, 2014 — proves the 4-peg case' },
         url: 'https://doi.org/10.36045/bbms/1420071861' }
     ]},
-    { group: '图结构', items: [
-      { text: 'S. Klavžar, U. Milutinović, C. Petr, On the Frame-Stewart algorithm, Discrete Appl. Math. 120, 2002' },
-      { text: 'P.K. Stockmeyer, Variations on the four-post Tower of Hanoi, Congr. Numer. 102, 1994' },
-      { text: 'Aumann, Götz, Hinz, Petr, The number of moves of the largest disc in shortest paths on Hanoi graphs, Electron. J. Combin. 21, 2014',
+    { group: { zh: '图结构', en: 'Graph Structure' }, items: [
+      { text: { zh: 'S. Klavžar, U. Milutinović, C. Petr, On the Frame-Stewart algorithm, Discrete Appl. Math. 120, 2002',
+                en: 'S. Klavžar, U. Milutinović, C. Petr, On the Frame-Stewart algorithm, Discrete Appl. Math. 120, 2002' } },
+      { text: { zh: 'P.K. Stockmeyer, Variations on the four-post Tower of Hanoi, Congr. Numer. 102, 1994',
+                en: 'P.K. Stockmeyer, Variations on the four-post Tower of Hanoi, Congr. Numer. 102, 1994' } },
+      { text: { zh: 'Aumann, Götz, Hinz, Petr, The number of moves of the largest disc in shortest paths on Hanoi graphs, Electron. J. Combin. 21, 2014',
+                en: 'Aumann, Götz, Hinz, Petr, The number of moves of the largest disc in shortest paths on Hanoi graphs, Electron. J. Combin. 21, 2014' },
         url: 'https://www.combinatorics.org/ojs/index.php/eljc/article/view/v21i4p38' }
     ]}
   ];
 
   const state = {};
+  let lang = 'zh';
+
+  function t(obj) { return (obj && typeof obj === 'object') ? (obj[lang] || obj.zh || '') : obj; }
+
+  function setLang(next) {
+    lang = next === 'en' ? 'en' : 'zh';
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    document.title = I18N[lang].pageTitle;
+    document.getElementById('hanoi-title').textContent = I18N[lang].headerTitle;
+    document.getElementById('hanoi-sub').textContent = I18N[lang].headerSub;
+    document.getElementById('lang-btn').textContent = I18N[lang].langSwitchTo;
+    document.getElementById('lang-name').textContent = I18N[lang].langName;
+    const container = document.getElementById('variants');
+    container.innerHTML = '';
+    HanoiVariants.forEach(v => container.appendChild(buildVariantBlock(v)));
+    HanoiVariants.forEach(v => buildVariant(v));
+    renderPapers();
+  }
 
   function buildParams(v) {
     const p = {};
@@ -868,8 +937,8 @@ body { background: var(--bg); color: var(--text);
     const f = v.formula(buildParams(v));
     const sEl = document.getElementById('stats-' + v.id);
     sEl.innerHTML =
-      `<div>状态数 = ${st.data.states.length}&nbsp;&nbsp;<span class="formula">${renderFormula(f.states)}</span></div>` +
-      `<div>边数 = ${st.data.edges.length}&nbsp;&nbsp;<span class="formula">${renderFormula(f.edges)}</span></div>`;
+      `<div>${I18N[lang].statesLabel} = ${st.data.states.length}&nbsp;&nbsp;<span class="formula">${renderFormula(f.states)}</span></div>` +
+      `<div>${I18N[lang].edgesLabel} = ${st.data.edges.length}&nbsp;&nbsp;<span class="formula">${renderFormula(f.edges)}</span></div>`;
   }
 
   function buildVariantBlock(v) {
@@ -881,12 +950,12 @@ body { background: var(--bg); color: var(--text);
 
     const title = document.createElement('h2');
     title.className = 'v-title';
-    title.textContent = v.name;
+    title.textContent = t(v.name);
     block.appendChild(title);
 
     const desc = document.createElement('p');
     desc.className = 'v-desc';
-    desc.textContent = v.desc;
+    desc.textContent = t(v.desc);
     block.appendChild(desc);
 
     if (v.ref) {
@@ -917,7 +986,7 @@ body { background: var(--bg); color: var(--text);
       const wrap = document.createElement('div');
       wrap.className = 'control';
       const val = st.params[p.key];
-      wrap.innerHTML = `<label>${p.label}: <span class="val" id="val-${v.id}-${p.key}">${val}</span></label>
+      wrap.innerHTML = `<label>${t(p.label)}: <span class="val" id="val-${v.id}-${p.key}">${val}</span></label>
         <input type="range" id="param-${v.id}-${p.key}" min="${p.min}" max="${p.max}" step="${p.step}" value="${val}">`;
       wrap.querySelector('input').addEventListener('input', e => {
         st.params[p.key] = Number(e.target.value);
@@ -929,7 +998,7 @@ body { background: var(--bg); color: var(--text);
 
     const lblWrap = document.createElement('div');
     lblWrap.className = 'control';
-    lblWrap.innerHTML = `<label><input type="checkbox" id="chk-labels-${v.id}"> 标签</label>`;
+    lblWrap.innerHTML = `<label><input type="checkbox" id="chk-labels-${v.id}">${I18N[lang].labelToggle}</label>`;
     lblWrap.querySelector('input').addEventListener('change', e => {
       st.showLabels = e.target.checked;
       buildVariant(v);
@@ -938,7 +1007,7 @@ body { background: var(--bg); color: var(--text);
 
     const spWrap = document.createElement('div');
       spWrap.className = 'control';
-      spWrap.innerHTML = `<label><input type="checkbox" id="chk-path-${v.id}" checked> 最短路径</label>`;
+      spWrap.innerHTML = `<label><input type="checkbox" id="chk-path-${v.id}" checked>${I18N[lang].pathToggle}</label>`;
       spWrap.querySelector('input').addEventListener('change', e => {
         st.showPath = e.target.checked;
         buildVariant(v);
@@ -959,20 +1028,20 @@ body { background: var(--bg); color: var(--text);
 
   function renderPapers() {
     const sec = document.getElementById('papers');
-    sec.innerHTML = '<h2>参考文献</h2>';
+    sec.innerHTML = '<h2>' + I18N[lang].papersTitle + '</h2>';
     PAPERS.forEach(g => {
       const h = document.createElement('h3');
-      h.textContent = g.group;
+      h.textContent = t(g.group);
       sec.appendChild(h);
       g.items.forEach(it => {
         const p = document.createElement('p');
         p.className = 'paper';
         if (it.url) {
           const a = document.createElement('a');
-          a.href = it.url; a.target = '_blank'; a.textContent = ' [链接]';
-          p.textContent = it.text; p.appendChild(a);
+          a.href = it.url; a.target = '_blank'; a.textContent = I18N[lang].link;
+          p.textContent = t(it.text); p.appendChild(a);
         } else {
-          p.textContent = it.text;
+          p.textContent = t(it.text);
         }
         sec.appendChild(p);
       });
@@ -980,17 +1049,13 @@ body { background: var(--bg); color: var(--text);
   }
 
   function init() {
-    const container = document.getElementById('variants');
-    HanoiVariants.forEach(v => {
-      container.appendChild(buildVariantBlock(v));
-    });
-    HanoiVariants.forEach(v => buildVariant(v));
-    renderPapers();
+    const btn = document.getElementById('lang-btn');
+    if (btn) btn.addEventListener('click', () => setLang(lang === 'zh' ? 'en' : 'zh'));
+    setLang('zh');
   }
 
-  return { init };
+  return { init, setLang, getLang: () => lang };
 });
-
 </script>
 <script>document.addEventListener('DOMContentLoaded', function(){ HanoiApp.init(); });</script>
 </body>

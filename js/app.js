@@ -1,38 +1,97 @@
-/* app.js — 应用逻辑 (UMD): 所有变体单页展示 */
+/* app.js — 应用逻辑 (UMD): 所有变体单页展示, 中英双语切换 */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory();
   else root.HanoiApp = factory();
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
+  const I18N = {
+    zh: {
+      pageTitle: '汉诺塔 — 众神的三角谜团',
+      headerTitle: '汉诺塔',
+      headerSub: '众神的三角谜团',
+      papersTitle: '参考文献',
+      link: ' [链接]',
+      statesLabel: '状态数',
+      edgesLabel: '边数',
+      labelToggle: ' 标签',
+      pathToggle: ' 最短路径',
+      langName: '中文',
+      langSwitchTo: 'EN',
+    },
+    en: {
+      pageTitle: 'Tower of Hanoi — The Triangle Riddle of the Gods',
+      headerTitle: 'Tower of Hanoi',
+      headerSub: 'The Triangle Riddle of the Gods',
+      papersTitle: 'References',
+      link: ' [link]',
+      statesLabel: 'states',
+      edgesLabel: 'edges',
+      labelToggle: ' labels',
+      pathToggle: ' shortest path',
+      langName: 'English',
+      langSwitchTo: '中',
+    }
+  };
+
   const PAPERS = [
-    { group: '奠基', items: [
-      { text: 'É. Lucas, Récréations Mathématiques vol. III, 1893 — 汉诺塔原始出处' },
-      { text: 'A.M. Hinz et al., The Tower of Hanoi – Myths and Maths, Springer, 2013 — 权威专著' }
+    { group: { zh: '奠基', en: 'Foundations' }, items: [
+      { text: { zh: 'É. Lucas, Récréations Mathématiques vol. III, 1893 — 汉诺塔原始出处',
+                en: 'É. Lucas, Récréations Mathématiques vol. III, 1893 — original Hanoi source' } },
+      { text: { zh: 'A.M. Hinz et al., The Tower of Hanoi – Myths and Maths, Springer, 2013 — 权威专著',
+                en: 'A.M. Hinz et al., The Tower of Hanoi – Myths and Maths, Springer, 2013 — authoritative monograph' } }
     ]},
-    { group: 'Sierpinski 同构', items: [
-      { text: 'I. Stewart, Le lion, le lama et la laitue, Pour la Science 142, 1989 — 首次提出汉诺塔图 ≅ Sierpinski 垫片' },
-      { text: 'A.M. Hinz & A. Schief, The average distance on the Sierpiński gasket, Probab. Theory Related Fields 87, 1990' },
-      { text: 'D. Romik, Shortest paths in the Tower of Hanoi, arXiv:math/0310109',
+    { group: { zh: 'Sierpinski 同构', en: 'Sierpinski Isomorphism' }, items: [
+      { text: { zh: 'I. Stewart, Le lion, le lama et la laitue, Pour la Science 142, 1989 — 首次提出汉诺塔图 ≅ Sierpinski 垫片',
+                en: 'I. Stewart, Le lion, le lama et la laitue, Pour la Science 142, 1989 — first to identify Hanoi graphs ≅ Sierpinski gasket' } },
+      { text: { zh: 'A.M. Hinz & A. Schief, The average distance on the Sierpiński gasket, Probab. Theory Related Fields 87, 1990',
+                en: 'A.M. Hinz & A. Schief, The average distance on the Sierpiński gasket, Probab. Theory Related Fields 87, 1990' } },
+      { text: { zh: 'D. Romik, Shortest paths in the Tower of Hanoi, arXiv:math/0310109',
+                en: 'D. Romik, Shortest paths in the Tower of Hanoi, arXiv:math/0310109' },
         url: 'https://arxiv.org/abs/math/0310109' }
     ]},
-    { group: '多柱 / Frame–Stewart', items: [
-      { text: 'H.E. Dudeney, The Canterbury Puzzles, 1908 — 4柱问题 (Reve\'s Puzzle)' },
-      { text: 'J.S. Frame & B.M. Stewart, Amer. Math. Monthly 48, 1941 — Frame–Stewart 算法' },
-      { text: 'X. Chen & J. Shen, On the Frame–Stewart conjecture, SIAM J. Comput. 33, 2004',
+    { group: { zh: '多柱 / Frame–Stewart', en: 'Multiple Pegs / Frame–Stewart' }, items: [
+      { text: { zh: "H.E. Dudeney, The Canterbury Puzzles, 1908 — 4柱问题 (Reve's Puzzle)",
+                en: "H.E. Dudeney, The Canterbury Puzzles, 1908 — the four-peg problem (Reve's Puzzle)" } },
+      { text: { zh: 'J.S. Frame & B.M. Stewart, Amer. Math. Monthly 48, 1941 — Frame–Stewart 算法',
+                en: 'J.S. Frame & B.M. Stewart, Amer. Math. Monthly 48, 1941 — Frame–Stewart algorithm' } },
+      { text: { zh: 'X. Chen & J. Shen, On the Frame–Stewart conjecture, SIAM J. Comput. 33, 2004',
+                en: 'X. Chen & J. Shen, On the Frame–Stewart conjecture, SIAM J. Comput. 33, 2004' },
         url: 'https://doi.org/10.1137/S0097539703431019' },
-      { text: 'T. Bousch, La quatrième tour de Hanoï, Bull. Belg. Math. Soc. 21, 2014 — 证明4柱情形',
+      { text: { zh: 'T. Bousch, La quatrième tour de Hanoï, Bull. Belg. Math. Soc. 21, 2014 — 证明4柱情形',
+                en: 'T. Bousch, La quatrième tour de Hanoï, Bull. Belg. Math. Soc. 21, 2014 — proves the 4-peg case' },
         url: 'https://doi.org/10.36045/bbms/1420071861' }
     ]},
-    { group: '图结构', items: [
-      { text: 'S. Klavžar, U. Milutinović, C. Petr, On the Frame-Stewart algorithm, Discrete Appl. Math. 120, 2002' },
-      { text: 'P.K. Stockmeyer, Variations on the four-post Tower of Hanoi, Congr. Numer. 102, 1994' },
-      { text: 'Aumann, Götz, Hinz, Petr, The number of moves of the largest disc in shortest paths on Hanoi graphs, Electron. J. Combin. 21, 2014',
+    { group: { zh: '图结构', en: 'Graph Structure' }, items: [
+      { text: { zh: 'S. Klavžar, U. Milutinović, C. Petr, On the Frame-Stewart algorithm, Discrete Appl. Math. 120, 2002',
+                en: 'S. Klavžar, U. Milutinović, C. Petr, On the Frame-Stewart algorithm, Discrete Appl. Math. 120, 2002' } },
+      { text: { zh: 'P.K. Stockmeyer, Variations on the four-post Tower of Hanoi, Congr. Numer. 102, 1994',
+                en: 'P.K. Stockmeyer, Variations on the four-post Tower of Hanoi, Congr. Numer. 102, 1994' } },
+      { text: { zh: 'Aumann, Götz, Hinz, Petr, The number of moves of the largest disc in shortest paths on Hanoi graphs, Electron. J. Combin. 21, 2014',
+                en: 'Aumann, Götz, Hinz, Petr, The number of moves of the largest disc in shortest paths on Hanoi graphs, Electron. J. Combin. 21, 2014' },
         url: 'https://www.combinatorics.org/ojs/index.php/eljc/article/view/v21i4p38' }
     ]}
   ];
 
   const state = {};
+  let lang = 'zh';
+
+  function t(obj) { return (obj && typeof obj === 'object') ? (obj[lang] || obj.zh || '') : obj; }
+
+  function setLang(next) {
+    lang = next === 'en' ? 'en' : 'zh';
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    document.title = I18N[lang].pageTitle;
+    document.getElementById('hanoi-title').textContent = I18N[lang].headerTitle;
+    document.getElementById('hanoi-sub').textContent = I18N[lang].headerSub;
+    document.getElementById('lang-btn').textContent = I18N[lang].langSwitchTo;
+    document.getElementById('lang-name').textContent = I18N[lang].langName;
+    const container = document.getElementById('variants');
+    container.innerHTML = '';
+    HanoiVariants.forEach(v => container.appendChild(buildVariantBlock(v)));
+    HanoiVariants.forEach(v => buildVariant(v));
+    renderPapers();
+  }
 
   function buildParams(v) {
     const p = {};
@@ -62,8 +121,8 @@
     const f = v.formula(buildParams(v));
     const sEl = document.getElementById('stats-' + v.id);
     sEl.innerHTML =
-      `<div>状态数 = ${st.data.states.length}&nbsp;&nbsp;<span class="formula">${renderFormula(f.states)}</span></div>` +
-      `<div>边数 = ${st.data.edges.length}&nbsp;&nbsp;<span class="formula">${renderFormula(f.edges)}</span></div>`;
+      `<div>${I18N[lang].statesLabel} = ${st.data.states.length}&nbsp;&nbsp;<span class="formula">${renderFormula(f.states)}</span></div>` +
+      `<div>${I18N[lang].edgesLabel} = ${st.data.edges.length}&nbsp;&nbsp;<span class="formula">${renderFormula(f.edges)}</span></div>`;
   }
 
   function buildVariantBlock(v) {
@@ -75,12 +134,12 @@
 
     const title = document.createElement('h2');
     title.className = 'v-title';
-    title.textContent = v.name;
+    title.textContent = t(v.name);
     block.appendChild(title);
 
     const desc = document.createElement('p');
     desc.className = 'v-desc';
-    desc.textContent = v.desc;
+    desc.textContent = t(v.desc);
     block.appendChild(desc);
 
     if (v.ref) {
@@ -111,7 +170,7 @@
       const wrap = document.createElement('div');
       wrap.className = 'control';
       const val = st.params[p.key];
-      wrap.innerHTML = `<label>${p.label}: <span class="val" id="val-${v.id}-${p.key}">${val}</span></label>
+      wrap.innerHTML = `<label>${t(p.label)}: <span class="val" id="val-${v.id}-${p.key}">${val}</span></label>
         <input type="range" id="param-${v.id}-${p.key}" min="${p.min}" max="${p.max}" step="${p.step}" value="${val}">`;
       wrap.querySelector('input').addEventListener('input', e => {
         st.params[p.key] = Number(e.target.value);
@@ -123,7 +182,7 @@
 
     const lblWrap = document.createElement('div');
     lblWrap.className = 'control';
-    lblWrap.innerHTML = `<label><input type="checkbox" id="chk-labels-${v.id}"> 标签</label>`;
+    lblWrap.innerHTML = `<label><input type="checkbox" id="chk-labels-${v.id}">${I18N[lang].labelToggle}</label>`;
     lblWrap.querySelector('input').addEventListener('change', e => {
       st.showLabels = e.target.checked;
       buildVariant(v);
@@ -132,7 +191,7 @@
 
     const spWrap = document.createElement('div');
       spWrap.className = 'control';
-      spWrap.innerHTML = `<label><input type="checkbox" id="chk-path-${v.id}" checked> 最短路径</label>`;
+      spWrap.innerHTML = `<label><input type="checkbox" id="chk-path-${v.id}" checked>${I18N[lang].pathToggle}</label>`;
       spWrap.querySelector('input').addEventListener('change', e => {
         st.showPath = e.target.checked;
         buildVariant(v);
@@ -153,20 +212,20 @@
 
   function renderPapers() {
     const sec = document.getElementById('papers');
-    sec.innerHTML = '<h2>参考文献</h2>';
+    sec.innerHTML = '<h2>' + I18N[lang].papersTitle + '</h2>';
     PAPERS.forEach(g => {
       const h = document.createElement('h3');
-      h.textContent = g.group;
+      h.textContent = t(g.group);
       sec.appendChild(h);
       g.items.forEach(it => {
         const p = document.createElement('p');
         p.className = 'paper';
         if (it.url) {
           const a = document.createElement('a');
-          a.href = it.url; a.target = '_blank'; a.textContent = ' [链接]';
-          p.textContent = it.text; p.appendChild(a);
+          a.href = it.url; a.target = '_blank'; a.textContent = I18N[lang].link;
+          p.textContent = t(it.text); p.appendChild(a);
         } else {
-          p.textContent = it.text;
+          p.textContent = t(it.text);
         }
         sec.appendChild(p);
       });
@@ -174,13 +233,10 @@
   }
 
   function init() {
-    const container = document.getElementById('variants');
-    HanoiVariants.forEach(v => {
-      container.appendChild(buildVariantBlock(v));
-    });
-    HanoiVariants.forEach(v => buildVariant(v));
-    renderPapers();
+    const btn = document.getElementById('lang-btn');
+    if (btn) btn.addEventListener('click', () => setLang(lang === 'zh' ? 'en' : 'zh'));
+    setLang('zh');
   }
 
-  return { init };
+  return { init, setLang, getLang: () => lang };
 });

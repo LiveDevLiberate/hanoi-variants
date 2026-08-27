@@ -27,6 +27,12 @@ body { background: var(--bg); color: var(--text);
 #header-text .subtitle { color: var(--dim); font-size: 15px;
   letter-spacing: 0.12em;
   font-family: "峄山碑篆体", "Moon Stars Kai HW", serif; }
+#lang-switch { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+#lang-switch #lang-btn { background: none; border: 1px solid var(--dim2);
+  color: var(--text); font-size: 12px; padding: 3px 10px; cursor: pointer;
+  border-radius: 3px; font-family: inherit; letter-spacing: 0.05em; }
+#lang-switch #lang-btn:hover { border-color: var(--accent); color: var(--accent); }
+#lang-switch #lang-name { color: var(--dim2); font-size: 12px; }
 
 .variant-block { margin-bottom: 72px; padding-top: 24px; }
 .variant-block .v-title { font-size: 24px; font-weight: normal;

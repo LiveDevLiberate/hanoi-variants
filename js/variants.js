@@ -334,19 +334,19 @@
 
   return [
     {
-      id: 'classic', name: '经典 3 柱',
-      desc: '三根柱子，n 个大小不同的盘。每次移动一个盘，大盘不能压小盘。状态图 = Sierpinski 三角。',
-      params: [{ key: 'n', label: '盘数', min: 1, max: 6, step: 1, default: 3 }],
+      id: 'classic', name: { zh: '经典 3 柱', en: 'Classic 3-Peg' },
+      desc: { zh: '三根柱子，n 个大小不同的盘。每次移动一个盘，大盘不能压小盘。状态图 = Sierpinski 三角。', en: 'Three pegs, n disks of distinct sizes. Move one disk at a time; a larger disk can never sit on a smaller one. State graph = Sierpinski gasket.' },
+      params: [{ key: 'n', label: { zh: '盘数', en: 'Disks' }, min: 1, max: 6, step: 1, default: 1 }],
       build: classicBuild,
       formula: p => ({ states: '3^n', edges: 'E(n) = 3\\,E(n-1) + 3' }),
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     },
     {
-      id: 'same-disk', name: '相同碟片',
-      desc: '每级 N 个相同大小的盘，nl 个等级。同大小盘互换算同一状态，每级 C(N+2,2) 种分布。',
+      id: 'same-disk', name: { zh: '相同碟片', en: 'Same-Size Disks' },
+      desc: { zh: '每级 N 个相同大小的盘，nl 个等级。同大小盘互换算同一状态，每级 C(N+2,2) 种分布。', en: 'N equal disks per level, nl levels. Permuting disks of equal size gives the same state; C(N+2,2) distributions per level.' },
       params: [
-        { key: 'N', label: '每级碟数', min: 1, max: 4, step: 1, default: 2 },
-        { key: 'nl', label: '等级数', min: 1, max: 3, step: 1, default: 2 }
+        { key: 'N', label: { zh: '每级碟数', en: 'Disks/level' }, min: 1, max: 4, step: 1, default: 1 },
+        { key: 'nl', label: { zh: '等级数', en: 'Levels' }, min: 1, max: 3, step: 1, default: 1 }
       ],
       build: sameDiskBuild,
       formula: p => ({ states: `\\binom{${p.N}+2}{2}^{${p.nl}}`,
@@ -354,69 +354,69 @@
       shortest: null
     },
     {
-      id: 'oneway', name: '单向循环',
-      desc: '盘只能 A→B→C→A 单向循环移动。有向图，边带箭头。',
-      params: [{ key: 'n', label: '盘数', min: 1, max: 5, step: 1, default: 3 }],
+      id: 'oneway', name: { zh: '单向循环', en: 'One-Way Cycle' },
+      desc: { zh: '盘只能 A→B→C→A 单向循环移动。有向图，边带箭头。', en: 'Disks may move only in the cycle A→B→C→A. Directed graph with arrows on edges.' },
+      params: [{ key: 'n', label: { zh: '盘数', en: 'Disks' }, min: 1, max: 5, step: 1, default: 1 }],
       build: onewayBuild,
       formula: p => ({ states: '3^n', edges: 'E(n) = 3\\,E(n-1) + 3' }),
       shortest: { start: [0, 0, 0], end: [2, 2, 2], directed: true }
     },
     {
-      id: 'linear', name: '线性相邻',
-      desc: '盘只能移到相邻柱（A↔B、B↔C）。最短路径 3^n − 1 步。',
-      params: [{ key: 'n', label: '盘数', min: 1, max: 5, step: 1, default: 3 }],
+      id: 'linear', name: { zh: '线性相邻', en: 'Linear / Adjacent' },
+      desc: { zh: '盘只能移到相邻柱（A↔B、B↔C）。最短路径 3^n − 1 步。', en: 'Disks move only between adjacent pegs (A↔B, B↔C). Shortest path takes 3^n − 1 moves.' },
+      params: [{ key: 'n', label: { zh: '盘数', en: 'Disks' }, min: 1, max: 5, step: 1, default: 1 }],
       build: linearBuild,
       formula: p => ({ states: '3^n', edges: 'd(000,222) = 3^n - 1' }),
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     },
     {
-      id: 'star', name: '星形',
-      desc: '盘只能移到中心柱（柱0）或从中心柱移出，非中心柱之间不能直接移动。移动图 = K₁,ₘ₋₁。',
-      params: [{ key: 'n', label: '盘数', min: 1, max: 5, step: 1, default: 3 }],
+      id: 'star', name: { zh: '星形', en: 'Star' },
+      desc: { zh: '盘只能移到中心柱（柱0）或从中心柱移出，非中心柱之间不能直接移动。移动图 = K₁,ₘ₋₁。', en: 'Disks move only to/from the central peg (peg 0); non-central pegs cannot exchange directly. Movement graph = K₁,ₘ₋₁.' },
+      params: [{ key: 'n', label: { zh: '盘数', en: 'Disks' }, min: 1, max: 5, step: 1, default: 1 }],
       build: starBuild,
       formula: p => ({ states: '3^n', edges: 'E(n) = 3^n - 1' }),
       ref: 'E.-M. Mehiri, On the restricted Hanoi graphs, arXiv:2304.03857',
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     },
     {
-      id: 'four-peg', name: '4 柱',
-      desc: '四根柱子。状态图 = Sierpinski 四面体的 2D 投影。Frame–Stewart 算法。',
-      params: [{ key: 'n', label: '盘数', min: 1, max: 4, step: 1, default: 2 }],
+      id: 'four-peg', name: { zh: '4 柱', en: 'Four Pegs' },
+      desc: { zh: '四根柱子。状态图 = Sierpinski 四面体的 2D 投影。Frame–Stewart 算法。', en: 'Four pegs. State graph = 2D projection of the Sierpinski tetrahedron. Frame–Stewart algorithm.' },
+      params: [{ key: 'n', label: { zh: '盘数', en: 'Disks' }, min: 1, max: 4, step: 1, default: 1 }],
       build: fourPegBuild,
       formula: p => ({ states: '4^n', edges: 'Frame\text{-}Stewart' }),
       shortest: null
     },
     {
-      id: 'magnetic', name: '磁铁',
-      desc: '相邻盘必须异极相对（奇偶盘极性不同），同极不能相邻。状态图是受限子图。',
-      params: [{ key: 'n', label: '盘数', min: 1, max: 5, step: 1, default: 3 }],
+      id: 'magnetic', name: { zh: '磁铁', en: 'Magnetic' },
+      desc: { zh: '相邻盘必须异极相对（奇偶盘极性不同），同极不能相邻。状态图是受限子图。', en: 'Adjacent disks must have opposite polarity (parity of disk index differs); equal poles cannot be neighbors. State graph is a restricted subgraph.' },
+      params: [{ key: 'n', label: { zh: '盘数', en: 'Disks' }, min: 1, max: 5, step: 1, default: 1 }],
       build: magneticBuild,
       formula: p => ({ states: '3^n', edges: '|E| = 3\\,2^{n-1}' }),
       ref: 'U. Levy, The Magnetic Tower of Hanoi, arXiv:1003.0225',
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     },
     {
-      id: 'twin', name: '双子塔',
-      desc: '两套 3 柱同步运行。移动盘时 A、B 两组同时移到同一目标柱，两处都必须合法。状态 = 每盘在两组的位置，共 9ⁿ 个。',
-      params: [{ key: 'n', label: '每套盘数', min: 1, max: 3, step: 1, default: 2 }],
+      id: 'twin', name: { zh: '双子塔', en: 'Twin Towers' },
+      desc: { zh: '两套 3 柱同步运行。移动盘时 A、B 两组同时移到同一目标柱，两处都必须合法。状态 = 每盘在两组的位置，共 9ⁿ 个。', en: 'Two coupled sets of 3 pegs run in sync. Moving a disk transfers it to the same target peg in both sets; both moves must be legal. State = position in both sets per disk, 9ⁿ total.' },
+      params: [{ key: 'n', label: { zh: '每套盘数', en: 'Disks/set' }, min: 1, max: 3, step: 1, default: 1 }],
       build: twinBuild,
       formula: p => ({ states: '9^n', edges: 'E(n) = 3^n' }),
       ref: 'Z. Sunic, Twin Towers of Hanoi, arXiv:1108.4494',
       shortest: null
     },
     {
-      id: 'weighted', name: '加权',
-      desc: '经典规则，但柱间移动成本 = 柱距 |a−b|。粗边成本高，最短路径按加权计算（不再是最少步数）。',
-      params: [{ key: 'n', label: '盘数', min: 2, max: 6, step: 1, default: 3 }],
+      id: 'weighted', name: { zh: '加权', en: 'Weighted' },
+      desc: { zh: '经典规则，但柱间移动成本 = 柱距 |a−b|。粗边成本高，最短路径按加权计算（不再是最少步数）。', en: 'Classic rules, but moving between pegs costs the peg distance |a−b|. Thick edges are costly; shortest path is computed with weights (not minimal moves).' },
+      params: [{ key: 'n', label: { zh: '盘数', en: 'Disks' }, min: 2, max: 6, step: 1, default: 2 }],
       build: weightedBuild,
       formula: p => ({ states: '3^n', edges: 'E(n) = 3\,E(n-1) + 3' }),
       ref: 'E.-M. Mehiri & H. Belbachir, The weighted Tower of Hanoi, arXiv:2208.06705',
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
     },
     {
-      id: 'forbidden', name: '禁止状态',
-      desc: '最大盘不能放在中柱。某些状态被剔除，状态图是挖洞的子图。',
-      params: [{ key: 'n', label: '盘数', min: 2, max: 5, step: 1, default: 3 }],
+      id: 'forbidden', name: { zh: '禁止状态', en: 'Forbidden States' },
+      desc: { zh: '最大盘不能放在中柱。某些状态被剔除，状态图是挖洞的子图。', en: 'The largest disk cannot rest on the middle peg. Some states are removed; the state graph is a subgraph with holes.' },
+      params: [{ key: 'n', label: { zh: '盘数', en: 'Disks' }, min: 2, max: 5, step: 1, default: 2 }],
       build: forbiddenBuild,
       formula: p => ({ states: '2 \\cdot 3^{n-1}', edges: 'E(n) = 3\\,E(n-1) + 1' }),
       shortest: { start: [0, 0, 0], end: [2, 2, 2] }
