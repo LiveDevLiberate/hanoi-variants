@@ -9,6 +9,7 @@ def main():
     ap.add_argument('output')
     ap.add_argument('--css', action='append', default=[])
     ap.add_argument('--js', action='append', default=[])
+    ap.add_argument('--img', action='append', default=[])
     a = ap.parse_args()
 
     root = Path(a.template).parent
@@ -29,6 +30,18 @@ def main():
         pat = re.compile(r'<script[^>]+src="' + re.escape(js_path) + r'"[^>]*>\s*</script>\s*')
         assert pat.search(html), f'找不到 script: {js_path}'
         html = pat.sub(lambda m: f'<script>\n{js}\n</script>\n', html, count=1)
+
+    # 内联图片为 data URI
+    import base64, mimetypes
+    for img_path in a.img:
+        p = root / img_path
+        assert p.exists(), f'找不到 img: {img_path}'
+        mime = mimetypes.guess_type(str(p))[0] or 'image/svg+xml'
+        b64 = base64.b64encode(p.read_bytes()).decode()
+        pat = re.compile(r'<img[^>]+src="' + re.escape(img_path) + r'"[^>]*>')
+        assert pat.search(html), f'找不到 img 标签: {img_path}'
+        html = pat.sub(lambda m: m.group(0).replace(
+            'src="' + img_path + '"', f'src="data:{mime};base64,{b64}"'), html)
 
     Path(a.output).parent.mkdir(parents=True, exist_ok=True)
     Path(a.output).write_text(html, encoding='utf-8')

@@ -47,6 +47,7 @@ checks = {
   'ref 字段':     html.count('ref: ') >= 4,
   'arXiv 链接':   'arxiv.org/abs' in html,
   'KaTeX CDN':    'katex.min.css' in html,
+  '金色三角内联': '#ffdf73' in html and 'back-top-tri' in html and 'footer-tri' in html,
   '初始化钩子':    'DOMContentLoaded' in html,
   '无本地残留':    not re.search(r'(src|href)="(css/|js/|lib/)', html),
 }
