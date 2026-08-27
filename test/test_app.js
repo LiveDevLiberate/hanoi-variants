@@ -13,7 +13,11 @@ function createElement() {
   };
   Object.defineProperty(el, 'innerHTML', {
     get() { return el._html; },
-    set(v) { el._html = v; el.textContent = v.replace(/<[^>]*>/g, ''); },
+    set(v) {
+      el._html = v;
+      el.textContent = v.replace(/<[^>]*>/g, '');
+      if (v === '') el.children = [];
+    },
   });
   return el;
 }
@@ -118,6 +122,10 @@ for (const v of Variants) {
 assert.strictEqual(svgEls.length, 10, '10 个独立 svg');
 
 // 双语: 默认中文, 切英文后变体标题切换
+// 最短路径默认关闭
+const classicState = Variants.map(v => v.id);
+assert.ok(classicState.length === 10, '10 变体');
+// 通过 renderGraph opts 验证: 默认 showPath false (app.js buildVariant 传入)
 assert.strictEqual(App.getLang(), 'zh', '默认中文');
 const firstTitle = () => getEl('variants').children[0]?.children[0]?.textContent || '';
 assert.ok(getEl('variants').children.length === 10, '10 个变体块');
@@ -127,5 +135,10 @@ assert.strictEqual(App.getLang(), 'en', '切英文');
 App.setLang('zh');
 assert.strictEqual(App.getLang(), 'zh', '切回中文');
 assert.strictEqual(document.documentElement.lang, 'zh-CN', 'lang 属性中文');
+// 章节导航按钮 (10 个) + 回到顶部按钮
+const nav = getEl('section-nav');
+assert.strictEqual(nav.children.length, 10, '10 个导航按钮');
+const backTop = getEl('back-top');
+assert.ok(backTop, '回到顶部按钮存在');
 
 console.log('✓ test_app 全部通过 (10 变体单页流程 + SVG class 只读 + 坐标无 NaN)');

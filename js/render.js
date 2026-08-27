@@ -50,6 +50,15 @@
 
     const directed = !!data.directed;
 
+    // 金属金节点渐变 (中心高光 → 边缘暗金)
+    const goldDefs = svg.append('defs');
+    const goldGrad = goldDefs.append('radialGradient')
+      .attr('id', 'node-gold').attr('cx', '35%').attr('cy', '30%').attr('r', '80%');
+    goldGrad.append('stop').attr('offset', '0%').attr('stop-color', '#ffdf73');
+    goldGrad.append('stop').attr('offset', '35%').attr('stop-color', '#eccb76');
+    goldGrad.append('stop').attr('offset', '70%').attr('stop-color', '#e5b84b');
+    goldGrad.append('stop').attr('offset', '100%').attr('stop-color', '#996515');
+
     function edgePts(e) {
       const a = e.from !== undefined ? e.from : e[0];
       const b = e.to !== undefined ? e.to : e[1];
@@ -66,7 +75,7 @@
         .attr('y1', e => edgePts(e)[0][1])
         .attr('x2', e => edgePts(e)[1][0])
         .attr('y2', e => edgePts(e)[1][1])
-        .style('stroke', e => e[2] !== undefined ? (e[2] > 1 ? '#ffd700' : '#c8c8c8') : T.edge)
+        .style('stroke', e => e[2] !== undefined ? (e[2] > 1 ? '#e5b84b' : '#c8c8c8') : T.edge)
         .style('stroke-width', e => e[2] !== undefined ? 1.8 + e[2] * 1.2 : 2.4)
         .style('opacity', edgeOpacity);
 
@@ -90,7 +99,7 @@
       .attr('cx', (d) => toPx(data.coords[d])[0])
       .attr('cy', (d) => toPx(data.coords[d])[1])
       .attr('r', nodeR)
-      .style('fill', T.node);
+      .style('fill', 'url(#node-gold)');
 
     if (opts.showLabels && data.states.length <= LABEL_LIMIT) {
       const labelSize = Math.max(4, 16 * Math.pow(50 / Math.max(data.states.length, 2), 0.45));

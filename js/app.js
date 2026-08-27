@@ -88,6 +88,7 @@
     document.getElementById('lang-name').textContent = I18N[lang].langName;
     const container = document.getElementById('variants');
     container.innerHTML = '';
+    renderNav();
     HanoiVariants.forEach(v => container.appendChild(buildVariantBlock(v)));
     HanoiVariants.forEach(v => buildVariant(v));
     renderPapers();
@@ -126,11 +127,12 @@
   }
 
   function buildVariantBlock(v) {
-    const st = state[v.id] = { params: {}, showLabels: false, showPath: true, data: null };
+    const st = state[v.id] = { params: {}, showLabels: false, showPath: false, data: null };
     v.params.forEach(pp => { st.params[pp.key] = pp.default; });
 
     const block = document.createElement('section');
     block.className = 'variant-block';
+    block.id = 'block-' + v.id;
 
     const title = document.createElement('h2');
     title.className = 'v-title';
@@ -191,7 +193,7 @@
 
     const spWrap = document.createElement('div');
       spWrap.className = 'control';
-      spWrap.innerHTML = `<label><input type="checkbox" id="chk-path-${v.id}" checked>${I18N[lang].pathToggle}</label>`;
+      spWrap.innerHTML = `<label><input type="checkbox" id="chk-path-${v.id}">${I18N[lang].pathToggle}</label>`;
       spWrap.querySelector('input').addEventListener('change', e => {
         st.showPath = e.target.checked;
         buildVariant(v);
@@ -208,6 +210,22 @@
     block.appendChild(gc);
 
     return block;
+  }
+
+  function renderNav() {
+    const nav = document.getElementById('section-nav');
+    nav.innerHTML = '';
+    HanoiVariants.forEach(v => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'nav-btn';
+      b.textContent = t(v.name);
+      b.addEventListener('click', () => {
+        const el = document.getElementById('block-' + v.id);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      nav.appendChild(b);
+    });
   }
 
   function renderPapers() {
@@ -235,6 +253,8 @@
   function init() {
     const btn = document.getElementById('lang-btn');
     if (btn) btn.addEventListener('click', () => setLang(lang === 'zh' ? 'en' : 'zh'));
+    const top = document.getElementById('back-top');
+    if (top) top.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
     setLang('zh');
   }
 
