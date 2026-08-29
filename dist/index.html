@@ -211,7 +211,7 @@ body { background: var(--bg); color: var(--text);
     </g>
   </svg>
     <p class="footer-contact"><a href="mailto:roger.sx@outlook.com">roger.sx@outlook.com</a></p>
-    <p class="footer-note">版权原因，无法使用《众神的三角力量》音乐 :/，但是你可以自己播放 :D，Enjoy!</p>
+    <p class="footer-note" id="footer-note">版权原因，无法使用《众神的三角力量》音乐 :/，但是你可以自己播放 :D，Enjoy!</p>
   </footer>
   <button id="back-top" type="button" aria-label="回到顶部" title="回到顶部">
     <svg viewBox="0 0 32 32" aria-hidden="true">
@@ -954,6 +954,7 @@ body { background: var(--bg); color: var(--text);
       pathToggle: ' 最短路径',
       langName: '中文',
       langSwitchTo: 'EN',
+      footerNote: '版权原因，无法使用《众神的三角力量》音乐 :/，但是你可以自己播放 :D，Enjoy!',
     },
     en: {
       pageTitle: 'Tower of Hanoi — The Triangle Riddle of the Gods',
@@ -967,6 +968,7 @@ body { background: var(--bg); color: var(--text);
       pathToggle: ' shortest path',
       langName: 'English',
       langSwitchTo: '中',
+      footerNote: "Due to copyright, we can't use the music from \"The Legend of Zelda: A Link to the Past\" :/ but you can play your own :D, Enjoy!",
     }
   };
 
@@ -1022,6 +1024,8 @@ body { background: var(--bg); color: var(--text);
     document.getElementById('hanoi-sub').textContent = I18N[lang].headerSub;
     document.getElementById('lang-btn').textContent = I18N[lang].langSwitchTo;
     document.getElementById('lang-name').textContent = I18N[lang].langName;
+    const fn = document.getElementById('footer-note');
+    if (fn) fn.textContent = I18N[lang].footerNote;
     const container = document.getElementById('variants');
     container.innerHTML = '';
     renderNav();

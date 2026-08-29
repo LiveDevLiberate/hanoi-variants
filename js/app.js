@@ -18,6 +18,7 @@
       pathToggle: ' 最短路径',
       langName: '中文',
       langSwitchTo: 'EN',
+      footerNote: '版权原因，无法使用《众神的三角力量》音乐 :/，但是你可以自己播放 :D，Enjoy!',
     },
     en: {
       pageTitle: 'Tower of Hanoi — The Triangle Riddle of the Gods',
@@ -31,6 +32,7 @@
       pathToggle: ' shortest path',
       langName: 'English',
       langSwitchTo: '中',
+      footerNote: "Due to copyright, we can't use the music from \"The Legend of Zelda: A Link to the Past\" :/ but you can play your own :D, Enjoy!",
     }
   };
 
@@ -86,6 +88,8 @@
     document.getElementById('hanoi-sub').textContent = I18N[lang].headerSub;
     document.getElementById('lang-btn').textContent = I18N[lang].langSwitchTo;
     document.getElementById('lang-name').textContent = I18N[lang].langName;
+    const fn = document.getElementById('footer-note');
+    if (fn) fn.textContent = I18N[lang].footerNote;
     const container = document.getElementById('variants');
     container.innerHTML = '';
     renderNav();
