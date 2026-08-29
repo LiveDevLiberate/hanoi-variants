@@ -70,6 +70,15 @@ body { background: var(--bg); color: var(--text);
 .variant-block .v-stats > div { margin-bottom: 2px; }
 .variant-block .formula { color: var(--text); font-style: normal; }
 
+.v-legend { display: flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--dim); margin-bottom: 8px; flex-wrap: wrap; }
+.v-legend .lg { display: inline-block; width: 14px; height: 10px;
+  margin-left: 8px; }
+.v-legend .lg-node { background: radial-gradient(circle at 35% 30%, #fff3c4, #e5b84b 70%, #996515);
+  border-radius: 50%; }
+.v-legend .lg-edge { background: #ffffff; height: 2px; align-self: center; }
+.v-legend .lg-path { background: #ff4040; height: 3px; align-self: center; }
+
 .v-controls { display: flex; gap: 28px; flex-wrap: wrap; align-items: center;
   margin: 4px 0 20px; padding: 12px 0; border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line); }
@@ -86,6 +95,10 @@ body { background: var(--bg); color: var(--text);
 .control input[type=range] { vertical-align: middle;
   accent-color: var(--node); background: #111; }
 .control input[type=checkbox] { accent-color: var(--node); margin-right: 5px; }
+.reset-btn { background: none; border: 1px solid var(--line);
+  color: var(--dim); font-size: 13px; padding: 3px 12px; cursor: pointer;
+  border-radius: 3px; font-family: inherit; }
+.reset-btn:hover { color: var(--gold-1); border-color: var(--gold-2); }
 
 .v-graph-container { position: relative; }
 .v-graph { width: 100%; height: auto; aspect-ratio: 18 / 10; display: block; }
@@ -100,6 +113,17 @@ body { background: var(--bg); color: var(--text);
   color: var(--dim); text-transform: uppercase; margin-bottom: 16px; }
 #papers h3 { font-size: 17px; font-weight: normal; margin: 18px 0 8px;
   color: var(--text); }
+#compare { margin-top: 64px; border-top: 1px solid var(--line); padding-top: 28px; }
+#compare h2 { font-size: 18px; font-weight: normal; letter-spacing: 0.1em;
+  color: var(--dim); text-transform: uppercase; margin-bottom: 16px; }
+.compare-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.compare-table th, .compare-table td { text-align: left;
+  padding: 8px 12px; border-bottom: 1px solid var(--line); }
+.compare-table th { color: var(--dim); font-weight: normal;
+  letter-spacing: 0.05em; font-size: 14px; }
+.compare-table td { color: var(--text); }
+.compare-table tr:hover td { background: var(--panel); }
+.compare-table .cmp-formula { color: var(--dim2); font-size: 13px; }
 #papers .paper { font-size: 16px; color: var(--dim); margin-bottom: 6px;
   padding-left: 12px; border-left: 1px solid var(--line); }
 #papers .paper a { color: var(--gold-2); text-decoration: none; }
@@ -149,3 +173,15 @@ body { background: var(--bg); color: var(--text);
 .footer-contact a:hover { color: var(--gold-1);
   text-shadow: 0 0 6px rgba(212, 175, 55, 0.5); }
 .footer-note { color: var(--dim2); font-size: 14px; }
+/* 移动端响应式 */
+@media (max-width: 720px) {
+  #main { padding: 24px 16px 60px; }
+  #header-inner { flex-wrap: wrap; gap: 12px; }
+  #hanoi-logo { width: 60px; height: 45px; }
+  #header-text h1 { font-size: 26px; }
+  #lang-switch { margin-left: auto; }
+  #section-nav .nav-btn { font-size: 14px; padding: 5px 10px; }
+  .v-controls { gap: 14px; }
+  #back-top { right: 16px; bottom: 16px; width: 56px; height: 56px; }
+  #footer-tri { width: 80px; height: 80px; }
+}

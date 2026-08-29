@@ -19,6 +19,19 @@
       langName: '中文',
       langSwitchTo: 'EN',
       footerNote: '版权原因，无法使用《众神的三角力量》音乐 :/，但是你可以自己播放 :D，Enjoy!',
+      legend: '图例：',
+      nodeTip: { state: '状态', index: '索引' },
+      reset: '重置',
+      exportSVG: '导出 SVG',
+      exportPNG: '导出 PNG',
+      compareTitle: '变体对比',
+      thVariant: '变体',
+      thStates: '状态数',
+      thEdges: '边数',
+      thFormula: '公式',
+      legendNode: '状态',
+      legendEdge: '移动',
+      legendPath: '最短路径',
     },
     en: {
       pageTitle: 'Tower of Hanoi — The Triangle Riddle of the Gods',
@@ -33,6 +46,19 @@
       langName: 'English',
       langSwitchTo: '中',
       footerNote: "Due to copyright, we can't use the music from \"The Legend of Zelda: A Link to the Past\" :/ but you can play your own :D, Enjoy!",
+      legend: 'Legend: ',
+      nodeTip: { state: 'state', index: 'index' },
+      reset: 'Reset',
+      exportSVG: 'Export SVG',
+      exportPNG: 'Export PNG',
+      compareTitle: 'Variant Comparison',
+      thVariant: 'Variant',
+      thStates: 'States',
+      thEdges: 'Edges',
+      thFormula: 'Formula',
+      legendNode: 'state',
+      legendEdge: 'move',
+      legendPath: 'shortest path',
     }
   };
 
@@ -95,6 +121,7 @@
     renderNav();
     HanoiVariants.forEach(v => container.appendChild(buildVariantBlock(v)));
     HanoiVariants.forEach(v => buildVariant(v));
+    renderCompare();
     renderPapers();
   }
 
@@ -122,12 +149,61 @@
       opts.start = 0;
       opts.end = st.data.states.length - 1;
     }
+    opts.onNodeClick = (s, idx, ev) => showNodeTip(v, s, idx, ev);
     HanoiRender.renderGraph(svg, st.data, opts);
     const f = v.formula(buildParams(v));
     const sEl = document.getElementById('stats-' + v.id);
     sEl.innerHTML =
       `<div>${I18N[lang].statesLabel} = ${st.data.states.length}&nbsp;&nbsp;<span class="formula">${renderFormula(f.states)}</span></div>` +
       `<div>${I18N[lang].edgesLabel} = ${st.data.edges.length}&nbsp;&nbsp;<span class="formula">${renderFormula(f.edges)}</span></div>`;
+  }
+
+  function showNodeTip(v, s, idx, ev) {
+    const tip = document.getElementById('node-tip-' + v.id);
+    if (!tip) return;
+    const labels = I18N[lang].nodeTip || { state: '状态', index: '索引' };
+    tip.innerHTML = `<b>${labels.state}: ${s.join('')}</b><br>${labels.index}: ${idx}`;
+    tip.style.display = 'block';
+    const svgRect = document.getElementById('graph-' + v.id).getBoundingClientRect();
+    const x = ev.clientX - svgRect.left + 14;
+    const y = ev.clientY - svgRect.top - 10;
+    tip.style.left = x + 'px';
+    tip.style.top = y + 'px';
+  }
+
+  function exportGraph(v, kind) {
+    const svg = document.getElementById('graph-' + v.id);
+    if (!svg) return;
+    const vb = svg.viewBox.baseVal;
+    const w = vb.width, h = vb.height;
+    if (kind === 'svg') {
+      const xml = new XMLSerializer().serializeToString(svg);
+      const blob = new Blob([xml], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'hanoi-' + v.id + '.svg';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } else {
+      const xml = new XMLSerializer().serializeToString(svg);
+      const blob = new Blob([xml], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      img.onload = () => {
+        const scale = 2;
+        const canvas = document.createElement('canvas');
+        canvas.width = w * scale; canvas.height = h * scale;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        const a = document.createElement('a');
+        a.href = canvas.toDataURL('image/png');
+        a.download = 'hanoi-' + v.id + '.png';
+        a.click();
+      };
+      img.src = url;
+    }
   }
 
   function buildVariantBlock(v) {
@@ -170,6 +246,15 @@
     stats.id = 'stats-' + v.id;
     block.appendChild(stats);
 
+    const legend = document.createElement('div');
+    legend.className = 'v-legend';
+    legend.innerHTML =
+      `<span>${I18N[lang].legend}</span>` +
+      `<span class="lg lg-node"></span><span>${I18N[lang].legendNode}</span>` +
+      `<span class="lg lg-edge"></span><span>${I18N[lang].legendEdge}</span>` +
+      `<span class="lg lg-path"></span><span>${I18N[lang].legendPath}</span>`;
+    block.appendChild(legend);
+
     const ctrl = document.createElement('div');
     ctrl.className = 'v-controls';
     v.params.forEach(p => {
@@ -203,6 +288,43 @@
         buildVariant(v);
       });
       ctrl.appendChild(spWrap);
+
+    const resetWrap = document.createElement('div');
+    resetWrap.className = 'control';
+    const resetBtn = document.createElement('button');
+    resetBtn.type = 'button';
+    resetBtn.className = 'reset-btn';
+    resetBtn.textContent = I18N[lang].reset;
+    resetBtn.addEventListener('click', () => {
+      v.params.forEach(pp => { st.params[pp.key] = pp.default; });
+      v.params.forEach(pp => {
+        const inp = document.getElementById(`param-${v.id}-${pp.key}`);
+        if (inp) inp.value = pp.default;
+        const val = document.getElementById(`val-${v.id}-${pp.key}`);
+        if (val) val.textContent = pp.default;
+      });
+      st.showLabels = false; st.showPath = false;
+      const lbl = document.getElementById(`chk-labels-${v.id}`);
+      if (lbl) lbl.checked = false;
+      const sp = document.getElementById(`chk-path-${v.id}`);
+      if (sp) sp.checked = false;
+      buildVariant(v);
+    });
+    resetWrap.appendChild(resetBtn);
+    ctrl.appendChild(resetWrap);
+
+    const expWrap = document.createElement('div');
+    expWrap.className = 'control exp-controls';
+    const svgBtn = document.createElement('button');
+    svgBtn.type = 'button'; svgBtn.className = 'reset-btn';
+    svgBtn.textContent = I18N[lang].exportSVG;
+    svgBtn.addEventListener('click', () => exportGraph(v, 'svg'));
+    const pngBtn = document.createElement('button');
+    pngBtn.type = 'button'; pngBtn.className = 'reset-btn';
+    pngBtn.textContent = I18N[lang].exportPNG;
+    pngBtn.addEventListener('click', () => exportGraph(v, 'png'));
+    expWrap.appendChild(svgBtn); expWrap.appendChild(pngBtn);
+    ctrl.appendChild(expWrap);
     block.appendChild(ctrl);
 
     const gc = document.createElement('div');
@@ -211,6 +333,10 @@
     svg.id = 'graph-' + v.id;
     svg.setAttribute('class', 'v-graph');
     gc.appendChild(svg);
+    const tip = document.createElement('div');
+    tip.className = 'tooltip';
+    tip.id = 'node-tip-' + v.id;
+    gc.appendChild(tip);
     block.appendChild(gc);
 
     return block;
@@ -230,6 +356,34 @@
       });
       nav.appendChild(b);
     });
+  }
+
+  function renderCompare() {
+    const sec = document.getElementById('compare');
+    if (!sec) return;
+    sec.innerHTML = '<h2>' + I18N[lang].compareTitle + '</h2>';
+    const table = document.createElement('table');
+    table.className = 'compare-table';
+    const thead = document.createElement('thead');
+    thead.innerHTML = `<tr><th>${I18N[lang].thVariant}</th><th>${I18N[lang].thStates}</th><th>${I18N[lang].thEdges}</th><th>${I18N[lang].thFormula}</th></tr>`;
+    table.appendChild(thead);
+    const tbody = document.createElement('tbody');
+    HanoiVariants.forEach(v => {
+      const p = {};
+      v.params.forEach(pp => { p[pp.key] = pp.default; });
+      let d = null;
+      try { d = v.build(p); } catch (e) { /* skip */ }
+      const f = v.formula(p);
+      const tr = document.createElement('tr');
+      tr.innerHTML =
+        `<td>${t(v.name)}</td>` +
+        `<td>${d ? d.states.length : '-'}</td>` +
+        `<td>${d ? d.edges.length : '-'}</td>` +
+        `<td class="cmp-formula"><span class="formula">${renderFormula(f.states)}</span> · <span class="formula">${renderFormula(f.edges)}</span></td>`;
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    sec.appendChild(table);
   }
 
   function renderPapers() {

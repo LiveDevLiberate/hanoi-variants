@@ -99,7 +99,10 @@
       .attr('cx', (d) => toPx(data.coords[d])[0])
       .attr('cy', (d) => toPx(data.coords[d])[1])
       .attr('r', nodeR)
-      .style('fill', 'url(#node-gold)');
+      .style('fill', 'url(#node-gold)')
+      .on('click', (ev, d) => {
+        if (opts.onNodeClick) opts.onNodeClick(data.states[d], d, ev);
+      });
 
     if (opts.showLabels && data.states.length <= LABEL_LIMIT) {
       const labelSize = Math.max(4, 16 * Math.pow(50 / Math.max(data.states.length, 2), 0.45));
@@ -131,6 +134,16 @@
         .attr('cx', (d, i) => toPx(data.coords[ends[i]])[0])
         .attr('cy', (d, i) => toPx(data.coords[ends[i]])[1])
         .attr('r', 10).style('fill', 'none').style('stroke', '#ff4040').style('stroke-width', 3);
+      if (opts.showSteps !== false && path.length <= 32) {
+        const steps = path.map(i => data.states[i].join(''));
+        const label = steps.join(' → ');
+        svg.append('text').attr('class', 'path-steps')
+          .attr('x', w / 2).attr('y', h - 30)
+          .attr('text-anchor', 'middle')
+          .style('fill', '#ff7a7a').style('font-size', 15 + 'px')
+          .style('font-family', 'JetBrains Mono, Consolas, monospace')
+          .text(label);
+      }
     }
   }
 

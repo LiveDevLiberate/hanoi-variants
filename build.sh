@@ -25,6 +25,7 @@ mkdir -p "$OUT_DIR"
 python3 "$ROOT/tools/inline.py" "$ROOT/index.html" "$OUT_FILE" \
   --css "$ROOT/css/style.css" \
   --js "lib/d3.v7.min.js" \
+  --prepend-js "lib/katex.min.js" \
   --js "js/core.js" \
   --js "js/variants.js" \
   --js "js/render.js" \

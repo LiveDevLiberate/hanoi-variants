@@ -10,6 +10,7 @@ def main():
     ap.add_argument('--css', action='append', default=[])
     ap.add_argument('--js', action='append', default=[])
     ap.add_argument('--img', action='append', default=[])
+    ap.add_argument('--prepend-js', action='append', default=[])
     a = ap.parse_args()
 
     root = Path(a.template).parent
@@ -42,6 +43,13 @@ def main():
         assert pat.search(html), f'找不到 img 标签: {img_path}'
         html = pat.sub(lambda m: m.group(0).replace(
             'src="' + img_path + '"', f'src="data:{mime};base64,{b64}"'), html)
+
+    # 插入 JS (无现有标签, 插到第一个 <script> 前)
+    for js_path in a.prepend_js:
+        js = Path(root / js_path).read_text(encoding='utf-8')
+        first_script = re.search(r'<script\b', html)
+        assert first_script, f'找不到 script 锚点: {js_path}'
+        html = html[:first_script.start()] + f'<script>\n{js}\n</script>\n' + html[first_script.start():]
 
     Path(a.output).parent.mkdir(parents=True, exist_ok=True)
     Path(a.output).write_text(html, encoding='utf-8')

@@ -62,6 +62,7 @@ function makeSel() {
     style() { return makeSel(); },
     text() { return makeSel(); },
     selectAll() { return makeSel(); },
+    on() { return makeSel(); },
     remove() { return makeSel(); },
   };
   return sel;

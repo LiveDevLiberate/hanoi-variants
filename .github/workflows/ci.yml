@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: 运行测试
+        run: |
+          node test/test_core.js
+          node test/test_variants.js
+          node test/test_app.js
+      - name: 构建单文件
+        run: ./build.sh
+      - name: 上传 dist 产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: hanoi-dist
+          path: dist/index.html
+          retention-days: 7
